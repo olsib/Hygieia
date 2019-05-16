@@ -5,7 +5,7 @@ import com.capitalone.dashboard.model.JenkinsJob;
 import com.capitalone.dashboard.model.TestCapability;
 import com.capitalone.dashboard.model.TestCase;
 import com.capitalone.dashboard.model.TestCaseStatus;
-import com.capitalone.dashboard.model.TestResult;
+import com.capitalone.dashboard.model.CustodianResult;
 import com.capitalone.dashboard.model.TestSuite;
 import com.capitalone.dashboard.model.TestSuiteType;
 import com.capitalone.dashboard.util.Supplier;
@@ -44,7 +44,7 @@ import static org.mockito.Mockito.when;
 public class DefaultJenkinsClientTest {
 
     @Mock private Supplier<RestOperations> restOperationsSupplier;
-//    @Mock private CucumberJsonToTestResultTransformer transformer;
+//    @Mock private CucumberJsonToCustodianResultTransformer transformer;
     @Mock private RestOperations rest;
 
     private JenkinsSettings settings;
@@ -56,7 +56,7 @@ public class DefaultJenkinsClientTest {
     public void init() {
         when(restOperationsSupplier.get()).thenReturn(rest);
         settings = new JenkinsSettings();
-        defaultJenkinsClient = new DefaultJenkinsClient(restOperationsSupplier, new CucumberJsonToTestResultTransformer(),
+        defaultJenkinsClient = new DefaultJenkinsClient(restOperationsSupplier, new CucumberJsonToCustodianResultTransformer(),
                 settings);
     }
 
@@ -156,8 +156,8 @@ public class DefaultJenkinsClientTest {
                 .thenReturn(new ResponseEntity<String>(artifacts, HttpStatus.OK));
         when(rest.exchange(eq(cucumberJsonUri), eq(HttpMethod.GET), Matchers.any(HttpEntity.class), eq(String.class)))
                 .thenReturn(new ResponseEntity<String>(cucumberJson, HttpStatus.OK));
-        TestResult testResult = defaultJenkinsClient.getCucumberTestResult("http://server/job/job1/");
-        Collection<TestCapability> capabilities = testResult.getTestCapabilities();
+        CustodianResult CustodianResult = defaultJenkinsClient.getCucumberCustodianResult("http://server/job/job1/");
+        Collection<TestCapability> capabilities = CustodianResult.getTestCapabilities();
         assertThat(capabilities, notNullValue());
 
         Iterator<TestCapability> capabilityIterator = capabilities.iterator();

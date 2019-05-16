@@ -34,7 +34,7 @@ import com.capitalone.dashboard.service.RallyFeatureService;
 import com.capitalone.dashboard.service.ScopeService;
 import com.capitalone.dashboard.service.ServiceService;
 import com.capitalone.dashboard.service.TeamService;
-import com.capitalone.dashboard.service.TestResultService;
+import com.capitalone.dashboard.service.CustodianResultService;
 import com.capitalone.dashboard.service.UserInfoService;
 import com.capitalone.dashboard.service.UserInfoServiceImpl;
 
@@ -121,8 +121,8 @@ import com.capitalone.dashboard.util.PaginationHeaderUtility;
  	}
 
  	@Bean
- 	public TestResultService testResultService() {
- 		return Mockito.mock(TestResultService.class);
+ 	public CustodianResultService CustodianResultService() {
+ 		return Mockito.mock(CustodianResultService.class);
  	}
 
  	@Bean

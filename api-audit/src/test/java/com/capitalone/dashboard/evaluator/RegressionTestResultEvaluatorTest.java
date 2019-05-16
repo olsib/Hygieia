@@ -4,7 +4,7 @@ import com.capitalone.dashboard.ApiSettings;
 import com.capitalone.dashboard.model.CollectorItem;
 import com.capitalone.dashboard.model.Dashboard;
 import com.capitalone.dashboard.model.DashboardType;
-import com.capitalone.dashboard.model.TestResult;
+import com.capitalone.dashboard.model.CustodianResult;
 import com.capitalone.dashboard.model.TestSuiteType;
 import com.capitalone.dashboard.model.TestCapability;
 import com.capitalone.dashboard.model.TestSuite;
@@ -12,9 +12,9 @@ import com.capitalone.dashboard.model.Widget;
 import com.capitalone.dashboard.model.Feature;
 
 import com.capitalone.dashboard.repository.FeatureRepository;
-import com.capitalone.dashboard.repository.TestResultRepository;
-import com.capitalone.dashboard.response.TestResultsAuditResponse;
-import com.capitalone.dashboard.status.TestResultAuditStatus;
+import com.capitalone.dashboard.repository.CustodianResultRepository;
+import com.capitalone.dashboard.response.CustodianResultsAuditResponse;
+import com.capitalone.dashboard.status.CustodianResultAuditStatus;
 import org.bson.types.ObjectId;
 import org.junit.Assert;
 import org.junit.Before;
@@ -34,90 +34,90 @@ import java.util.HashMap;
 import java.util.List;
 
 @RunWith(MockitoJUnitRunner.class)
-public class RegressionTestResultEvaluatorTest {
+public class RegressionCustodianResultEvaluatorTest {
 
     @InjectMocks
-    private RegressionTestResultEvaluator regressionTestResultEvaluator;
+    private RegressionCustodianResultEvaluator regressionCustodianResultEvaluator;
 
     @Mock
-    private TestResultRepository testResultRepository;
+    private CustodianResultRepository CustodianResultRepository;
 
     @Mock
     private FeatureRepository featureRepository;
 
     @Before
     public void setup(){
-        regressionTestResultEvaluator.setSettings(getSettings());
+        regressionCustodianResultEvaluator.setSettings(getSettings());
     }
 
     @Test
-    public void evaluate_testResultMissing(){
+    public void evaluate_CustodianResultMissing(){
         CollectorItem collectorItem = new CollectorItem();
         collectorItem.setId(ObjectId.get());
 
-        List<TestResult> emptyTestResults = new ArrayList<>();
-        when(testResultRepository.findByCollectorItemIdAndTimestampIsBetweenOrderByTimestampDesc(collectorItem.getId(),
-                123456789, 123456989)).thenReturn(emptyTestResults);
-        TestResultsAuditResponse testResultsAuditResponse = regressionTestResultEvaluator.getRegressionTestResultAudit(getDashboard(), collectorItem);
-        Assert.assertTrue(testResultsAuditResponse.getAuditStatuses().contains(TestResultAuditStatus.TEST_RESULT_MISSING));
-        Assert.assertTrue(!testResultsAuditResponse.getAuditStatuses().contains(TestResultAuditStatus.TEST_RESULT_AUDIT_OK));
-        Assert.assertTrue(!testResultsAuditResponse.getAuditStatuses().contains(TestResultAuditStatus.TEST_RESULT_AUDIT_FAIL));
-        Assert.assertTrue(!testResultsAuditResponse.getAuditStatuses().contains(TestResultAuditStatus.TEST_RESULT_SKIPPED));
+        List<CustodianResult> emptyCustodianResults = new ArrayList<>();
+        when(CustodianResultRepository.findByCollectorItemIdAndTimestampIsBetweenOrderByTimestampDesc(collectorItem.getId(),
+                123456789, 123456989)).thenReturn(emptyCustodianResults);
+        CustodianResultsAuditResponse CustodianResultsAuditResponse = regressionCustodianResultEvaluator.getRegressionCustodianResultAudit(getDashboard(), collectorItem);
+        Assert.assertTrue(CustodianResultsAuditResponse.getAuditStatuses().contains(CustodianResultAuditStatus.TEST_RESULT_MISSING));
+        Assert.assertTrue(!CustodianResultsAuditResponse.getAuditStatuses().contains(CustodianResultAuditStatus.TEST_RESULT_AUDIT_OK));
+        Assert.assertTrue(!CustodianResultsAuditResponse.getAuditStatuses().contains(CustodianResultAuditStatus.TEST_RESULT_AUDIT_FAIL));
+        Assert.assertTrue(!CustodianResultsAuditResponse.getAuditStatuses().contains(CustodianResultAuditStatus.TEST_RESULT_SKIPPED));
     }
 
     @Test
-    public void evaluate_testResultAuditOK(){
+    public void evaluate_CustodianResultAuditOK(){
         CollectorItem collectorItem = new CollectorItem();
         collectorItem.setId(ObjectId.get());
-        List<TestResult> testResults = Arrays.asList(getAuditOKTestResult());
-        when(testResultRepository.findByCollectorItemIdAndTimestampIsBetweenOrderByTimestampDesc(any(ObjectId.class),
-                any(Long.class), any(Long.class))).thenReturn(testResults);
+        List<CustodianResult> CustodianResults = Arrays.asList(getAuditOKCustodianResult());
+        when(CustodianResultRepository.findByCollectorItemIdAndTimestampIsBetweenOrderByTimestampDesc(any(ObjectId.class),
+                any(Long.class), any(Long.class))).thenReturn(CustodianResults);
         when(featureRepository.getStoryByTeamID("TEST-1234")).thenReturn(Arrays.asList(new Feature()));
-        TestResultsAuditResponse testResultsAuditResponse = regressionTestResultEvaluator.getRegressionTestResultAudit(getDashboard(), collectorItem);
-        Assert.assertTrue(!testResultsAuditResponse.getAuditStatuses().contains(TestResultAuditStatus.TEST_RESULT_MISSING));
-        Assert.assertTrue(testResultsAuditResponse.getAuditStatuses().contains(TestResultAuditStatus.TEST_RESULT_AUDIT_OK));
-        Assert.assertTrue(!testResultsAuditResponse.getAuditStatuses().contains(TestResultAuditStatus.TEST_RESULT_AUDIT_FAIL));
-        Assert.assertTrue(!testResultsAuditResponse.getAuditStatuses().contains(TestResultAuditStatus.TEST_RESULT_SKIPPED));
+        CustodianResultsAuditResponse CustodianResultsAuditResponse = regressionCustodianResultEvaluator.getRegressionCustodianResultAudit(getDashboard(), collectorItem);
+        Assert.assertTrue(!CustodianResultsAuditResponse.getAuditStatuses().contains(CustodianResultAuditStatus.TEST_RESULT_MISSING));
+        Assert.assertTrue(CustodianResultsAuditResponse.getAuditStatuses().contains(CustodianResultAuditStatus.TEST_RESULT_AUDIT_OK));
+        Assert.assertTrue(!CustodianResultsAuditResponse.getAuditStatuses().contains(CustodianResultAuditStatus.TEST_RESULT_AUDIT_FAIL));
+        Assert.assertTrue(!CustodianResultsAuditResponse.getAuditStatuses().contains(CustodianResultAuditStatus.TEST_RESULT_SKIPPED));
     }
 
     @Test
-    public void evaluate_testResultAuditFAIL(){
+    public void evaluate_CustodianResultAuditFAIL(){
         CollectorItem collectorItem = new CollectorItem();
         collectorItem.setId(ObjectId.get());
-        List<TestResult> testResults = Arrays.asList(getAuditFAILTestResult());
-        when(testResultRepository.findByCollectorItemIdAndTimestampIsBetweenOrderByTimestampDesc(any(ObjectId.class),
-                any(Long.class), any(Long.class))).thenReturn(testResults);
+        List<CustodianResult> CustodianResults = Arrays.asList(getAuditFAILCustodianResult());
+        when(CustodianResultRepository.findByCollectorItemIdAndTimestampIsBetweenOrderByTimestampDesc(any(ObjectId.class),
+                any(Long.class), any(Long.class))).thenReturn(CustodianResults);
         when(featureRepository.getStoryByTeamID("TEST-1234")).thenReturn(Arrays.asList(new Feature()));
-        TestResultsAuditResponse testResultsAuditResponse = regressionTestResultEvaluator.getRegressionTestResultAudit(getDashboard(), collectorItem);
-        Assert.assertTrue(!testResultsAuditResponse.getAuditStatuses().contains(TestResultAuditStatus.TEST_RESULT_MISSING));
-        Assert.assertTrue(!testResultsAuditResponse.getAuditStatuses().contains(TestResultAuditStatus.TEST_RESULT_AUDIT_OK));
-        Assert.assertTrue(testResultsAuditResponse.getAuditStatuses().contains(TestResultAuditStatus.TEST_RESULT_AUDIT_FAIL));
-        Assert.assertTrue(!testResultsAuditResponse.getAuditStatuses().contains(TestResultAuditStatus.TEST_RESULT_SKIPPED));
+        CustodianResultsAuditResponse CustodianResultsAuditResponse = regressionCustodianResultEvaluator.getRegressionCustodianResultAudit(getDashboard(), collectorItem);
+        Assert.assertTrue(!CustodianResultsAuditResponse.getAuditStatuses().contains(CustodianResultAuditStatus.TEST_RESULT_MISSING));
+        Assert.assertTrue(!CustodianResultsAuditResponse.getAuditStatuses().contains(CustodianResultAuditStatus.TEST_RESULT_AUDIT_OK));
+        Assert.assertTrue(CustodianResultsAuditResponse.getAuditStatuses().contains(CustodianResultAuditStatus.TEST_RESULT_AUDIT_FAIL));
+        Assert.assertTrue(!CustodianResultsAuditResponse.getAuditStatuses().contains(CustodianResultAuditStatus.TEST_RESULT_SKIPPED));
     }
 
     @Test
-    public void evaluate_testResultAuditSKIP(){
+    public void evaluate_CustodianResultAuditSKIP(){
         CollectorItem collectorItem = new CollectorItem();
         collectorItem.setId(ObjectId.get());
-        List<TestResult> testResults = Arrays.asList(getAuditSKIPTestResult());
-        when(testResultRepository.findByCollectorItemIdAndTimestampIsBetweenOrderByTimestampDesc(any(ObjectId.class),
-                any(Long.class), any(Long.class))).thenReturn(testResults);
+        List<CustodianResult> CustodianResults = Arrays.asList(getAuditSKIPCustodianResult());
+        when(CustodianResultRepository.findByCollectorItemIdAndTimestampIsBetweenOrderByTimestampDesc(any(ObjectId.class),
+                any(Long.class), any(Long.class))).thenReturn(CustodianResults);
         when(featureRepository.getStoryByTeamID("TEST-1234")).thenReturn(Arrays.asList(new Feature()));
-        TestResultsAuditResponse testResultsAuditResponse = regressionTestResultEvaluator.getRegressionTestResultAudit(getDashboard(), collectorItem);
-        Assert.assertTrue(!testResultsAuditResponse.getAuditStatuses().contains(TestResultAuditStatus.TEST_RESULT_MISSING));
-        Assert.assertTrue(!testResultsAuditResponse.getAuditStatuses().contains(TestResultAuditStatus.TEST_RESULT_AUDIT_OK));
-        Assert.assertTrue(!testResultsAuditResponse.getAuditStatuses().contains(TestResultAuditStatus.TEST_RESULT_AUDIT_FAIL));
-        Assert.assertTrue(testResultsAuditResponse.getAuditStatuses().contains(TestResultAuditStatus.TEST_RESULT_SKIPPED));
+        CustodianResultsAuditResponse CustodianResultsAuditResponse = regressionCustodianResultEvaluator.getRegressionCustodianResultAudit(getDashboard(), collectorItem);
+        Assert.assertTrue(!CustodianResultsAuditResponse.getAuditStatuses().contains(CustodianResultAuditStatus.TEST_RESULT_MISSING));
+        Assert.assertTrue(!CustodianResultsAuditResponse.getAuditStatuses().contains(CustodianResultAuditStatus.TEST_RESULT_AUDIT_OK));
+        Assert.assertTrue(!CustodianResultsAuditResponse.getAuditStatuses().contains(CustodianResultAuditStatus.TEST_RESULT_AUDIT_FAIL));
+        Assert.assertTrue(CustodianResultsAuditResponse.getAuditStatuses().contains(CustodianResultAuditStatus.TEST_RESULT_SKIPPED));
     }
 
     @Test
-    public void evaluate_featureTestResult() {
-        TestResult testResult = getTestResult();
-        HashMap featureTestMap = regressionTestResultEvaluator.getFeatureTestResult(testResult);
-        Assert.assertEquals(testResult.getSuccessCount(), Integer.parseInt(featureTestMap.get("successCount").toString()));
-        Assert.assertEquals(testResult.getFailureCount(), Integer.parseInt(featureTestMap.get("failureCount").toString()));
-        Assert.assertEquals(testResult.getSkippedCount(), Integer.parseInt(featureTestMap.get("skippedCount").toString()));
-        Assert.assertEquals(testResult.getTotalCount(), Integer.parseInt(featureTestMap.get("totalCount").toString()));
+    public void evaluate_featureCustodianResult() {
+        CustodianResult CustodianResult = getCustodianResult();
+        HashMap featureTestMap = regressionCustodianResultEvaluator.getFeatureCustodianResult(CustodianResult);
+        Assert.assertEquals(CustodianResult.getSuccessCount(), Integer.parseInt(featureTestMap.get("successCount").toString()));
+        Assert.assertEquals(CustodianResult.getFailureCount(), Integer.parseInt(featureTestMap.get("failureCount").toString()));
+        Assert.assertEquals(CustodianResult.getSkippedCount(), Integer.parseInt(featureTestMap.get("skippedCount").toString()));
+        Assert.assertEquals(CustodianResult.getTotalCount(), Integer.parseInt(featureTestMap.get("totalCount").toString()));
     }
 
     @Test
@@ -126,27 +126,27 @@ public class RegressionTestResultEvaluatorTest {
         Widget widget1 = new Widget();
         widget1.setName("TestWidget");
         dashboard.getWidgets().add(widget1);
-        Widget emptyWidget = regressionTestResultEvaluator.getFeatureWidget(dashboard);
+        Widget emptyWidget = regressionCustodianResultEvaluator.getFeatureWidget(dashboard);
         Assert.assertNotEquals(emptyWidget.getName(), "feature");
         Widget widget2 = new Widget();
         widget2.setName("feature");
         dashboard.getWidgets().add(widget2);
-        Widget featureWidget = regressionTestResultEvaluator.getFeatureWidget(dashboard);
+        Widget featureWidget = regressionCustodianResultEvaluator.getFeatureWidget(dashboard);
         Assert.assertEquals(featureWidget.getName(), "feature");
     }
 
-    private TestResult getTestResult() {
-        TestResult testResult = new TestResult();
-        testResult.setType(TestSuiteType.Functional);
-        testResult.setSuccessCount(10);
-        testResult.setFailureCount(5);
-        testResult.setSkippedCount(1);
-        testResult.setTotalCount(16);
-        return testResult;
+    private CustodianResult getCustodianResult() {
+        CustodianResult CustodianResult = new CustodianResult();
+        CustodianResult.setType(TestSuiteType.Functional);
+        CustodianResult.setSuccessCount(10);
+        CustodianResult.setFailureCount(5);
+        CustodianResult.setSkippedCount(1);
+        CustodianResult.setTotalCount(16);
+        return CustodianResult;
     }
-    private TestResult getAuditOKTestResult() {
-        TestResult testResult = new TestResult();
-        testResult.setType(TestSuiteType.Regression);
+    private CustodianResult getAuditOKCustodianResult() {
+        CustodianResult CustodianResult = new CustodianResult();
+        CustodianResult.setType(TestSuiteType.Regression);
         TestCapability testCapability = new TestCapability();
 
         TestSuite testSuite1 = new TestSuite();
@@ -163,13 +163,13 @@ public class RegressionTestResultEvaluatorTest {
 
         testCapability.getTestSuites().add(testSuite1);
         testCapability.getTestSuites().add(testSuite2);
-        testResult.getTestCapabilities().add(testCapability);
-        return testResult;
+        CustodianResult.getTestCapabilities().add(testCapability);
+        return CustodianResult;
     }
 
-    private TestResult getAuditFAILTestResult() {
-        TestResult testResult = new TestResult();
-        testResult.setType(TestSuiteType.Regression);
+    private CustodianResult getAuditFAILCustodianResult() {
+        CustodianResult CustodianResult = new CustodianResult();
+        CustodianResult.setType(TestSuiteType.Regression);
         TestCapability testCapability = new TestCapability();
 
 
@@ -179,11 +179,11 @@ public class RegressionTestResultEvaluatorTest {
         testSuite.setSkippedTestCaseCount(1);
         testSuite.setTotalTestCaseCount(40);
         testCapability.getTestSuites().add(testSuite);
-        testResult.getTestCapabilities().add(testCapability);
-        return testResult;
+        CustodianResult.getTestCapabilities().add(testCapability);
+        return CustodianResult;
     }
 
-    public TestResult getAuditSKIPTestResult() {
+    public CustodianResult getAuditSKIPTestResult() {
         TestResult testResult = new TestResult();
         testResult.setType(TestSuiteType.Functional);
         TestCapability testCapability = new TestCapability();

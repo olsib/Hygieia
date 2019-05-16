@@ -6,8 +6,8 @@ import com.capitalone.dashboard.evaluator.CodeQualityEvaluator;
 import com.capitalone.dashboard.evaluator.CodeReviewEvaluator;
 import com.capitalone.dashboard.evaluator.Evaluator;
 import com.capitalone.dashboard.evaluator.LibraryPolicyEvaluator;
-import com.capitalone.dashboard.evaluator.PerformanceTestResultEvaluator;
-import com.capitalone.dashboard.evaluator.RegressionTestResultEvaluator;
+import com.capitalone.dashboard.evaluator.PerformanceCustodianResultEvaluator;
+import com.capitalone.dashboard.evaluator.RegressionCustodianResultEvaluator;
 import com.capitalone.dashboard.evaluator.StaticSecurityAnalysisEvaluator;
 import com.capitalone.dashboard.status.DashboardAuditStatus;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,8 +26,8 @@ public class DashboardAuditModel {
     private final CodeReviewEvaluator codeReviewEvaluator;
     private final BuildEvaluator buildEvaluator;
     private final CodeQualityEvaluator codeQualityEvaluator;
-    private final RegressionTestResultEvaluator regressionTestResultEvaluator;
-    private final PerformanceTestResultEvaluator performanceTestResultEvaluator;
+    private final RegressionCustodianResultEvaluator regressionCustodianResultEvaluator;
+    private final PerformanceCustodianResultEvaluator performanceCustodianResultEvaluator;
     private final StaticSecurityAnalysisEvaluator staticSecurityAnalysisEvaluator;
     private final LibraryPolicyEvaluator libraryPolicyEvaluator;
     private final ArtifactEvaluator artifactEvaluator;
@@ -38,16 +38,16 @@ public class DashboardAuditModel {
     public DashboardAuditModel(CodeReviewEvaluator codeReviewEvaluator,
                                BuildEvaluator buildEvaluator,
                                CodeQualityEvaluator codeQualityEvaluator,
-                               RegressionTestResultEvaluator regressionTestResultEvaluator,
-                               PerformanceTestResultEvaluator performanceTestResultEvaluator,
+                               RegressionCustodianResultEvaluator regressionCustodianResultEvaluator,
+                               PerformanceCustodianResultEvaluator performanceCustodianResultEvaluator,
                                StaticSecurityAnalysisEvaluator staticSecurityAnalysisEvaluator,
                                LibraryPolicyEvaluator libraryPolicyEvaluator,ArtifactEvaluator artifactEvaluator) {
         this.codeReviewEvaluator = codeReviewEvaluator;
         this.buildEvaluator = buildEvaluator;
         this.codeQualityEvaluator = codeQualityEvaluator;
         this.staticSecurityAnalysisEvaluator = staticSecurityAnalysisEvaluator;
-        this.regressionTestResultEvaluator = regressionTestResultEvaluator;
-        this.performanceTestResultEvaluator = performanceTestResultEvaluator;
+        this.regressionCustodianResultEvaluator = regressionCustodianResultEvaluator;
+        this.performanceCustodianResultEvaluator = performanceCustodianResultEvaluator;
         this.libraryPolicyEvaluator = libraryPolicyEvaluator;
         this.artifactEvaluator = artifactEvaluator;
     }
@@ -60,8 +60,8 @@ public class DashboardAuditModel {
                 new SimpleEntry<>(AuditType.STATIC_SECURITY_ANALYSIS, (Evaluator)staticSecurityAnalysisEvaluator),
                 new SimpleEntry<>(AuditType.LIBRARY_POLICY, (Evaluator)libraryPolicyEvaluator),
                 new SimpleEntry<>(AuditType.BUILD_REVIEW, (Evaluator)buildEvaluator),
-                new SimpleEntry<>(AuditType.TEST_RESULT, (Evaluator)regressionTestResultEvaluator),
-                new SimpleEntry<>(AuditType.PERF_TEST, (Evaluator)performanceTestResultEvaluator),
+                new SimpleEntry<>(AuditType.TEST_RESULT, (Evaluator)regressionCustodianResultEvaluator),
+                new SimpleEntry<>(AuditType.PERF_TEST, (Evaluator)performanceCustodianResultEvaluator),
                 new SimpleEntry<>(AuditType.ARTIFACT,(Evaluator)artifactEvaluator))
                 .collect(Collectors.toMap(SimpleEntry::getKey, SimpleEntry::getValue)));
     }

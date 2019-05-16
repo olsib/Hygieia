@@ -1,6 +1,6 @@
 package hygieia.transformer;
 
-import com.capitalone.dashboard.model.TestResult;
+import com.capitalone.dashboard.model.CustodianResult;
 import com.capitalone.dashboard.model.quality.CucumberJsonReport;
 import com.capitalone.dashboard.model.quality.MochaJsSpecReport;
 import com.capitalone.dashboard.request.BuildDataCreateRequest;
@@ -17,10 +17,10 @@ import static org.mockito.Mockito.mock;
 /**
  * Created by stevegal on 2019-03-25.
  */
-public class TestResultVisitorTest {
+public class CustodianResultVisitorTest {
 
     private BuildDataCreateRequest mockBuidDataCreateRequest;
-    private TestResultVisitor sut;
+    private CustodianResultVisitor sut;
 
     private CucumberJsonReport cucumberTestReport;
     private MochaJsSpecReport mochaTestReport;
@@ -34,14 +34,14 @@ public class TestResultVisitorTest {
         cucumberTestReport = mapper.readValue(this.getClass().getResource("/cucumber.json"), CucumberJsonReport.class);
         mochaTestReport = mapper.readValue(this.getClass().getResource("/mochjsspec.json"), MochaJsSpecReport.class);
         mockBuidDataCreateRequest = mock(BuildDataCreateRequest.class);
-        sut = new TestResultVisitor("functional",mockBuidDataCreateRequest);
+        sut = new CustodianResultVisitor("functional",mockBuidDataCreateRequest);
     }
 
     @Test
     public void convertsCucumber() {
         sut.visit(cucumberTestReport);
 
-        TestResult report = sut.produceResult();
+        CustodianResult report = sut.produceResult();
 
         assertThat(report.getTotalCount(),is(equalTo(1)));
     }
@@ -50,7 +50,7 @@ public class TestResultVisitorTest {
     public void convertsMocha() {
         sut.visit(mochaTestReport);
 
-        TestResult report = sut.produceResult();
+        CustodianResult report = sut.produceResult();
 
         assertThat(report.getTotalCount(),is(equalTo(1)));
     }
@@ -61,7 +61,7 @@ public class TestResultVisitorTest {
         sut.visit(cucumberTestReport);
         sut.visit(mochaTestReport);
 
-        TestResult report = sut.produceResult();
+        CustodianResult report = sut.produceResult();
 
         assertThat(report.getTotalCount(),is(equalTo(2)));
 

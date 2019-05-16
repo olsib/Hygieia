@@ -5,14 +5,14 @@
         .module(HygieiaConfig.module)
         .controller('TestDetailsController', TestDetailsController);
 
-    TestDetailsController.$inject = ['$scope','$uibModalInstance', 'testResult', 'DashStatus'];
-    function TestDetailsController($scope, $uibModalInstance, testResult, DashStatus) {
+    TestDetailsController.$inject = ['$scope','$uibModalInstance', 'CustodianResult', 'DashStatus'];
+    function TestDetailsController($scope, $uibModalInstance, CustodianResult, DashStatus) {
         /*jshint validthis:true */
         var ctrl = this;
 
         ctrl.statuses = DashStatus;
-        ctrl.testResult = testResult;
-        ctrl.duration = msToTime(testResult.duration);
+        ctrl.CustodianResult = CustodianResult;
+        ctrl.duration = msToTime(CustodianResult.duration);
         ctrl.close = close;
 
         function close() {

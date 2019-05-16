@@ -211,17 +211,17 @@ public class HygieiaPublisher extends Notifier {
         private final boolean publishTestStart;
         private final boolean publishEvenBuildFails;
         private final String testFileNamePattern;
-        private final String testResultsDirectory;
+        private final String CustodianResultsDirectory;
         private final String testType;
         private final String testApplicationName;
         private final String testEnvironmentName;
 
         @DataBoundConstructor
-        public HygieiaTest(boolean publishTestStart, boolean publishEvenBuildFails, String testFileNamePattern, String testResultsDirectory, String testType, String testApplicationName, String testEnvironmentName) {
+        public HygieiaTest(boolean publishTestStart, boolean publishEvenBuildFails, String testFileNamePattern, String CustodianResultsDirectory, String testType, String testApplicationName, String testEnvironmentName) {
             this.publishTestStart = publishTestStart;
             this.publishEvenBuildFails = publishEvenBuildFails;
             this.testFileNamePattern = testFileNamePattern;
-            this.testResultsDirectory = testResultsDirectory;
+            this.CustodianResultsDirectory = CustodianResultsDirectory;
             this.testType = testType;
             this.testApplicationName = testApplicationName;
             this.testEnvironmentName = testEnvironmentName;
@@ -240,8 +240,8 @@ public class HygieiaPublisher extends Notifier {
         }
 
 
-        public String getTestResultsDirectory() {
-            return testResultsDirectory;
+        public String getCustodianResultsDirectory() {
+            return CustodianResultsDirectory;
         }
 
         public String getTestType() {

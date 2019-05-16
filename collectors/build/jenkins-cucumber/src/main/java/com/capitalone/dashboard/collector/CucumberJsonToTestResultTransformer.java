@@ -19,11 +19,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Transforms a Cucumber result JSON string into a TestResult
+ * Transforms a Cucumber result JSON string into a CustodianResult
  */
 @Component
-public class CucumberJsonToTestResultTransformer implements Transformer<String, List<TestSuite>> {
-    private static final Log LOG = LogFactory.getLog(CucumberJsonToTestResultTransformer.class);
+public class CucumberJsonToCustodianResultTransformer implements Transformer<String, List<TestSuite>> {
+    private static final Log LOG = LogFactory.getLog(CucumberJsonToCustodianResultTransformer.class);
 
     @Override
     public List<TestSuite> transformer(String json) {

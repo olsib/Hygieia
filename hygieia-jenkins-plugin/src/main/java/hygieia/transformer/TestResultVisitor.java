@@ -1,7 +1,7 @@
 package hygieia.transformer;
 
 import com.capitalone.dashboard.model.TestCapability;
-import com.capitalone.dashboard.model.TestResult;
+import com.capitalone.dashboard.model.CustodianResult;
 import com.capitalone.dashboard.model.TestSuiteType;
 import com.capitalone.dashboard.model.quality.CheckstyleReport;
 import com.capitalone.dashboard.model.quality.CucumberJsonReport;
@@ -19,7 +19,7 @@ import java.util.List;
 /**
  * Created by stevegal on 2019-03-25.
  */
-public class TestResultVisitor implements QualityVisitor<TestResult> {
+public class CustodianResultVisitor implements QualityVisitor<CustodianResult> {
 
     private List<TestCapability> capabilities = new ArrayList<>();
 
@@ -27,14 +27,14 @@ public class TestResultVisitor implements QualityVisitor<TestResult> {
     private BuildDataCreateRequest buildDataCreateRequest;
     private String capabilityDescription;
 
-    public TestResultVisitor(String testType, BuildDataCreateRequest buildDataCreateRequest) {
+    public CustodianResultVisitor(String testType, BuildDataCreateRequest buildDataCreateRequest) {
         this.testType = testType;
         this.buildDataCreateRequest = buildDataCreateRequest;
     }
 
     @Override
-    public TestResult produceResult() {
-        return this.buildTestResultObject(this.capabilities, this.buildDataCreateRequest, this.testType);
+    public CustodianResult produceResult() {
+        return this.buildCustodianResultObject(this.capabilities, this.buildDataCreateRequest, this.testType);
     }
 
     @Override
@@ -76,20 +76,20 @@ public class TestResultVisitor implements QualityVisitor<TestResult> {
         this.capabilities.add(capability);
     }
 
-    private TestResult buildTestResultObject(List<TestCapability> capabilities, BuildDataCreateRequest buildDataCreateRequest, String testType) {
+    private CustodianResult buildCustodianResultObject(List<TestCapability> capabilities, BuildDataCreateRequest buildDataCreateRequest, String testType) {
         if (!capabilities.isEmpty()) {
-            // There are test suites so let's construct a TestResult to encapsulate these results
-            TestResult testResult = new TestResult();
-            testResult.setType(TestSuiteType.fromString(testType));
-            testResult.setDescription(buildDataCreateRequest.getJobName());
-            testResult.setExecutionId(String.valueOf(buildDataCreateRequest.getNumber()));
-            testResult.setUrl(buildDataCreateRequest.getBuildUrl() + String.valueOf(buildDataCreateRequest.getNumber()) + "/");
-            testResult.setDuration(buildDataCreateRequest.getDuration());
-            testResult.setEndTime(buildDataCreateRequest.getStartTime() + buildDataCreateRequest.getDuration());
-            testResult.setStartTime(buildDataCreateRequest.getStartTime());
-            testResult.getTestCapabilities().addAll(capabilities);  //add all capabilities
-            testResult.setTotalCount(capabilities.size());
-            testResult.setTimestamp(System.currentTimeMillis());
+            // There are test suites so let's construct a CustodianResult to encapsulate these results
+            CustodianResult CustodianResult = new CustodianResult();
+            CustodianResult.setType(TestSuiteType.fromString(testType));
+            CustodianResult.setDescription(buildDataCreateRequest.getJobName());
+            CustodianResult.setExecutionId(String.valueOf(buildDataCreateRequest.getNumber()));
+            CustodianResult.setUrl(buildDataCreateRequest.getBuildUrl() + String.valueOf(buildDataCreateRequest.getNumber()) + "/");
+            CustodianResult.setDuration(buildDataCreateRequest.getDuration());
+            CustodianResult.setEndTime(buildDataCreateRequest.getStartTime() + buildDataCreateRequest.getDuration());
+            CustodianResult.setStartTime(buildDataCreateRequest.getStartTime());
+            CustodianResult.getTestCapabilities().addAll(capabilities);  //add all capabilities
+            CustodianResult.setTotalCount(capabilities.size());
+            CustodianResult.setTimestamp(System.currentTimeMillis());
             int testCapabilitySkippedCount = 0, testCapabilitySuccessCount = 0, testCapabilityFailCount = 0;
             int testCapabilityUnknownCount = 0;
             // Calculate counts based on test suites
@@ -109,11 +109,11 @@ public class TestResultVisitor implements QualityVisitor<TestResult> {
                         break;
                 }
             }
-            testResult.setSuccessCount(testCapabilitySuccessCount);
-            testResult.setFailureCount(testCapabilityFailCount);
-            testResult.setSkippedCount(testCapabilitySkippedCount);
-            testResult.setUnknownStatusCount(testCapabilityUnknownCount);
-            return testResult;
+            CustodianResult.setSuccessCount(testCapabilitySuccessCount);
+            CustodianResult.setFailureCount(testCapabilityFailCount);
+            CustodianResult.setSkippedCount(testCapabilitySkippedCount);
+            CustodianResult.setUnknownStatusCount(testCapabilityUnknownCount);
+            return CustodianResult;
         }
         return null;
     }

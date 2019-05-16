@@ -21,7 +21,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @ConfigurationProperties(prefix = "feature")
-public class TestResultSettings {
+public class CustodianResultSettings {
 	private String cron;
 	private int pageSize;
 	private String deltaStartDate;

@@ -271,7 +271,7 @@ public class ActiveJobNotifierTest {
         ArgumentCaptor<TestDataCreateRequest> captorTest = ArgumentCaptor.forClass(TestDataCreateRequest.class);
         ArgumentCaptor<BuildDataCreateRequest> captorBuild = ArgumentCaptor.forClass(BuildDataCreateRequest.class);
         verify(mockHygieiaService).publishBuildData(captorBuild.capture());
-        verify(mockHygieiaService,never()).publishTestResults(captorTest.capture());
+        verify(mockHygieiaService,never()).publishCustodianResults(captorTest.capture());
 
         BuildDataCreateRequest capturedRequest = captorBuild.getValue();
         assertThat(capturedRequest.getBuildStatus()).isEqualToIgnoringCase(BuildStatus.Success.toString());

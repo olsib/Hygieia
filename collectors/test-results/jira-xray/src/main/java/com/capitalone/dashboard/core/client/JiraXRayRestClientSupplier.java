@@ -1,7 +1,7 @@
 package com.capitalone.dashboard.core.client;
 
 import com.atlassian.jira.rest.client.api.JiraRestClient;
-import com.capitalone.dashboard.TestResultSettings;
+import com.capitalone.dashboard.CustodianResultSettings;
 import com.capitalone.dashboard.util.Supplier;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
@@ -33,23 +33,23 @@ public class JiraXRayRestClientSupplier implements Supplier<JiraRestClient> {
     private static final Logger LOGGER = LoggerFactory.getLogger(JiraXRayRestClientSupplier.class);
 
     @Autowired
-    private TestResultSettings testResultSettings;
+    private CustodianResultSettings CustodianResultSettings;
 
     @Override
     public JiraRestClient get() {
         JiraRestClient client = null;
 
-        String jiraCredentials = testResultSettings.getJiraCredentials();
-        String jiraBaseUrl = testResultSettings.getJiraBaseUrl();
+        String jiraCredentials = CustodianResultSettings.getJiraCredentials();
+        String jiraBaseUrl = CustodianResultSettings.getJiraBaseUrl();
         String proxyUri = null;
         String proxyPort = null;
 
         URI jiraUri = null;
 
         try {
-            if (testResultSettings.getJiraProxyUrl() != null && !testResultSettings.getJiraProxyUrl().isEmpty() && (testResultSettings.getJiraProxyPort() != null)) {
-                proxyUri = this.testResultSettings.getJiraProxyUrl();
-                proxyPort = this.testResultSettings.getJiraProxyPort();
+            if (CustodianResultSettings.getJiraProxyUrl() != null && !CustodianResultSettings.getJiraProxyUrl().isEmpty() && (CustodianResultSettings.getJiraProxyPort() != null)) {
+                proxyUri = this.CustodianResultSettings.getJiraProxyUrl();
+                proxyPort = this.CustodianResultSettings.getJiraProxyPort();
 
                 jiraUri = this.createJiraConnection(jiraBaseUrl,
                         proxyUri + ":" + proxyPort,

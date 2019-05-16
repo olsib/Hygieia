@@ -5,10 +5,10 @@ import com.capitalone.dashboard.model.TestCapability;
 import com.capitalone.dashboard.model.TestCase;
 import com.capitalone.dashboard.model.TestCaseStatus;
 import com.capitalone.dashboard.model.TestCaseStep;
-import com.capitalone.dashboard.model.TestResult;
+import com.capitalone.dashboard.model.CustodianResult;
 import com.capitalone.dashboard.model.TestSuite;
 import com.capitalone.dashboard.model.TestSuiteType;
-import com.capitalone.dashboard.repository.TestResultRepository;
+import com.capitalone.dashboard.repository.CustodianResultRepository;
 import com.capitalone.dashboard.response.PerformanceTestAuditResponse;
 
 import org.bson.types.ObjectId;
@@ -28,27 +28,27 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class PerformanceTestResultEvaluatorTest {
+public class PerformanceCustodianResultEvaluatorTest {
 
     @InjectMocks
-    private PerformanceTestResultEvaluator performanceTestResultEvaluator;
+    private PerformanceCustodianResultEvaluator performanceCustodianResultEvaluator;
     @Mock
-    private TestResultRepository testResultRepository;
+    private CustodianResultRepository CustodianResultRepository;
 
     @Test
     public void evaluate_COLLECTOR_ITEM_ERROR() {
         CollectorItem c = null;
-        PerformanceTestAuditResponse response = performanceTestResultEvaluator.evaluate(c,125634536, 6235263, null);
+        PerformanceTestAuditResponse response = performanceCustodianResultEvaluator.evaluate(c,125634536, 6235263, null);
         Assert.assertEquals(true, response.getAuditStatuses().toString().contains("COLLECTOR_ITEM_ERROR"));
     }
 
     @Test
     public void evaluate_AuditStatus_Avg_response_times() {
 
-        List<TestResult> tr = makeTestResult("KPI : Avg response times","Success");
+        List<CustodianResult> tr = makeCustodianResult("KPI : Avg response times","Success");
 
-        when(testResultRepository.findByCollectorItemIdAndTimestampIsBetweenOrderByTimestampDesc(any(ObjectId.class),any(Long.class),any(Long.class))).thenReturn(tr);
-        PerformanceTestAuditResponse responseV2 = performanceTestResultEvaluator.evaluate(makeCollectorItem(0),125634536, 6235263, null);
+        when(CustodianResultRepository.findByCollectorItemIdAndTimestampIsBetweenOrderByTimestampDesc(any(ObjectId.class),any(Long.class),any(Long.class))).thenReturn(tr);
+        PerformanceTestAuditResponse responseV2 = performanceCustodianResultEvaluator.evaluate(makeCollectorItem(0),125634536, 6235263, null);
         Assert.assertEquals(true, responseV2.getAuditStatuses().toString().contains("PERFORMANCE_COMMIT_IS_CURRENT"));
         Assert.assertEquals(true, responseV2.getAuditStatuses().toString().contains("PERFORMANCE_THRESHOLDS_RESPONSE_TIME_FOUND"));
         Assert.assertEquals(true, responseV2.getAuditStatuses().toString().contains("PERFORMANCE_MET"));
@@ -60,10 +60,10 @@ public class PerformanceTestResultEvaluatorTest {
     public void evaluate_AuditStatus_PERFORMANCE_THRESHOLDS_TRANSACTIONS_PER_SECOND_FOUND() {
 
 
-        List<TestResult> tr = makeTestResult("KPI : Transaction Per Second","Success");
+        List<CustodianResult> tr = makeCustodianResult("KPI : Transaction Per Second","Success");
 
-        when(testResultRepository.findByCollectorItemIdAndTimestampIsBetweenOrderByTimestampDesc(any(ObjectId.class),any(Long.class),any(Long.class))).thenReturn(tr);
-        PerformanceTestAuditResponse responseV2 = performanceTestResultEvaluator.evaluate(makeCollectorItem(0),125634536, 6235263, null);
+        when(CustodianResultRepository.findByCollectorItemIdAndTimestampIsBetweenOrderByTimestampDesc(any(ObjectId.class),any(Long.class),any(Long.class))).thenReturn(tr);
+        PerformanceTestAuditResponse responseV2 = performanceCustodianResultEvaluator.evaluate(makeCollectorItem(0),125634536, 6235263, null);
         Assert.assertEquals(true, responseV2.getAuditStatuses().toString().contains("PERFORMANCE_COMMIT_IS_CURRENT"));
         Assert.assertEquals(true, responseV2.getAuditStatuses().toString().contains("PERFORMANCE_THRESHOLDS_TRANSACTIONS_PER_SECOND_FOUND"));
         Assert.assertEquals(true, responseV2.getAuditStatuses().toString().contains("PERFORMANCE_MET"));
@@ -73,10 +73,10 @@ public class PerformanceTestResultEvaluatorTest {
     @Test
     public void evaluate_AuditStatus_PERFORMANCE_THRESHOLDS_ERROR_RATE_FOUND() {
 
-        List<TestResult> tr = makeTestResult("KPI : Error Rate Threshold","Success");
+        List<CustodianResult> tr = makeCustodianResult("KPI : Error Rate Threshold","Success");
 
-        when(testResultRepository.findByCollectorItemIdAndTimestampIsBetweenOrderByTimestampDesc(any(ObjectId.class),any(Long.class),any(Long.class))).thenReturn(tr);
-        PerformanceTestAuditResponse responseV2 = performanceTestResultEvaluator.evaluate(makeCollectorItem(0),125634536, 6235263, null);
+        when(CustodianResultRepository.findByCollectorItemIdAndTimestampIsBetweenOrderByTimestampDesc(any(ObjectId.class),any(Long.class),any(Long.class))).thenReturn(tr);
+        PerformanceTestAuditResponse responseV2 = performanceCustodianResultEvaluator.evaluate(makeCollectorItem(0),125634536, 6235263, null);
         Assert.assertEquals(true, responseV2.getAuditStatuses().toString().contains("PERFORMANCE_COMMIT_IS_CURRENT"));
         Assert.assertEquals(true, responseV2.getAuditStatuses().toString().contains("PERFORMANCE_THRESHOLDS_ERROR_RATE_FOUND"));
         Assert.assertEquals(true, responseV2.getAuditStatuses().toString().contains("PERFORMANCE_MET"));
@@ -86,9 +86,9 @@ public class PerformanceTestResultEvaluatorTest {
 
     @Test
     public void evaluate_AuditStatus_PERFORMANCE_RESULT_STATUS_NULL() {
-        List<TestResult> tr = makeTestResult("KPI : Error Rate Threshold",null);
-        when(testResultRepository.findByCollectorItemIdAndTimestampIsBetweenOrderByTimestampDesc(any(ObjectId.class),any(Long.class),any(Long.class))).thenReturn(tr);
-        PerformanceTestAuditResponse responseV2 = performanceTestResultEvaluator.evaluate(makeCollectorItem(0),125634536, 6235263, null);
+        List<CustodianResult> tr = makeCustodianResult("KPI : Error Rate Threshold",null);
+        when(CustodianResultRepository.findByCollectorItemIdAndTimestampIsBetweenOrderByTimestampDesc(any(ObjectId.class),any(Long.class),any(Long.class))).thenReturn(tr);
+        PerformanceTestAuditResponse responseV2 = performanceCustodianResultEvaluator.evaluate(makeCollectorItem(0),125634536, 6235263, null);
         Assert.assertEquals(true, responseV2.getAuditStatuses().toString().contains("PERFORMANCE_COMMIT_IS_CURRENT"));
         Assert.assertEquals(true, responseV2.getAuditStatuses().toString().contains("PERFORMANCE_THRESHOLDS_ERROR_RATE_FOUND"));
         Assert.assertEquals(true, responseV2.getAuditStatuses().toString().contains("PERFORMANCE_MET"));
@@ -111,13 +111,13 @@ public class PerformanceTestResultEvaluatorTest {
     }
 
 
-   private List<TestResult> makeTestResult(String testCaseDescription,String resultStatus) {
-       TestResult tr = new TestResult();
+   private List<CustodianResult> makeCustodianResult(String testCaseDescription,String resultStatus) {
+       CustodianResult tr = new CustodianResult();
        tr.setType(TestSuiteType.fromString("Performance"));
        tr.setDescription("Success");
        tr.setResultStatus(resultStatus);
        tr.getTestCapabilities().addAll(Stream.of(makeTestCapability(testCaseDescription)).collect(Collectors.toList()));
-       List<TestResult> trs = new ArrayList<>();
+       List<CustodianResult> trs = new ArrayList<>();
        trs.add(tr);
        return trs;
     }

@@ -235,12 +235,12 @@
             var totalSize = _.isEmpty(response.result) ? 0 : response.result.length;
             for (index = 0; index < totalSize; ++index) {
 
-                var testResult = _.isEmpty(response.result) ? {testCapabilities: []} : response.result[index];
+                var CustodianResult = _.isEmpty(response.result) ? {testCapabilities: []} : response.result[index];
                 var allZeros = {
                     failureCount: 0, successCount: 0, skippedCount: 0, totalCount: 0
                 };
                 // Aggregate the counts of all Functional test suites
-                var aggregate = _.reduce(_.filter(testResult.testCapabilities, {type: type}), function (result, capability) {
+                var aggregate = _.reduce(_.filter(CustodianResult.testCapabilities, {type: type}), function (result, capability) {
                     //New calculation: 3/10/16 - Topo Pal
                     result.failureCount += capability.failedTestSuiteCount;
                     result.successCount += capability.successTestSuiteCount;
@@ -256,13 +256,13 @@
 
                 ctrl.executionId = _.isEmpty(response.result) ? "-" : response.result[index].executionId;
                 result.push({
-                    name: testResult.description,
+                    name: CustodianResult.description,
                     totalCount: aggregate.totalCount === 0 ? '-' : $filter('number')(aggregate.totalCount, 0),
                     successCount: aggregate.totalCount === 0 ? '-' : $filter('number')(aggregate.successCount, 0),
                     failureCount: aggregate.totalCount === 0 ? '-' : $filter('number')(aggregate.failureCount, 0),
                     skippedCount: aggregate.totalCount === 0 ? '-' : $filter('number')(aggregate.skippedCount, 0),
                     successPercent: aggregate.totalCount === 0 ? '-' : $filter('number')(success, 0) + '%',
-                    details: testResult
+                    details: CustodianResult
                 });
             }
             return result;

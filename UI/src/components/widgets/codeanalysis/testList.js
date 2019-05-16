@@ -10,7 +10,7 @@
                 templateUrl: 'components/widgets/codeanalysis/testdetails.html',
                 size: 'lg',
                 resolve: {
-                    testResult: function () {
+                    CustodianResult: function () {
                         return test;
                     }
                 }

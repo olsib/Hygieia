@@ -41,7 +41,7 @@ public class HygieiaTestPublishStep extends AbstractStepImpl {
     public static final String MOCHA = "mocha";
     private String buildStatus;
     private String testFileNamePattern;
-    private String testResultsDirectory;
+    private String CustodianResultsDirectory;
     private String testType;
     private String testApplicationName;
     private String testEnvironmentName;
@@ -64,13 +64,13 @@ public class HygieiaTestPublishStep extends AbstractStepImpl {
         this.testFileNamePattern = testFileNamePattern;
     }
 
-    public String getTestResultsDirectory() {
-        return testResultsDirectory;
+    public String getCustodianResultsDirectory() {
+        return CustodianResultsDirectory;
     }
 
     @DataBoundSetter
-    public void setTestResultsDirectory(String testResultsDirectory) {
-        this.testResultsDirectory = testResultsDirectory;
+    public void setCustodianResultsDirectory(String CustodianResultsDirectory) {
+        this.CustodianResultsDirectory = CustodianResultsDirectory;
     }
 
     public String getTestType() {
@@ -101,10 +101,10 @@ public class HygieiaTestPublishStep extends AbstractStepImpl {
     }
 
     @DataBoundConstructor
-    public HygieiaTestPublishStep(String buildStatus, String testFileNamePattern, String testResultsDirectory, String testType, String testResultType, String testApplicationName, String testEnvironmentName) {
+    public HygieiaTestPublishStep(String buildStatus, String testFileNamePattern, String CustodianResultsDirectory, String testType, String CustodianResultType, String testApplicationName, String testEnvironmentName) {
         this.buildStatus = buildStatus;
         this.testFileNamePattern = testFileNamePattern;
-        this.testResultsDirectory = testResultsDirectory;
+        this.CustodianResultsDirectory = CustodianResultsDirectory;
         this.testType = testType;
         this.testApplicationName = testApplicationName;
         this.testEnvironmentName = testEnvironmentName;
@@ -156,7 +156,7 @@ public class HygieiaTestPublishStep extends AbstractStepImpl {
             return model;
         }
 
-        public ListBoxModel doFillTestResultType(String testResultType) {
+        public ListBoxModel doFillCustodianResultType(String CustodianResultType) {
             ListBoxModel model = new ListBoxModel();
 
             model.add(HygieiaConstants.CUCUMBER_JSON, CUCUMBER);
@@ -215,11 +215,11 @@ public class HygieiaTestPublishStep extends AbstractStepImpl {
                 listener.getLogger().println("Hygieia: Failed Publishing Build Data for Test Publishing. " + buildResponse.toString());
             }
             TestDataCreateRequest request =  new FunctionalTestBuilder(objectMapper).getTestDataCreateRequest(run, listener, BuildStatus.fromString(step.buildStatus), filepath, step.testApplicationName,
-                            step.testEnvironmentName, step.testType, step.testFileNamePattern, step.testResultsDirectory,
+                            step.testEnvironmentName, step.testType, step.testFileNamePattern, step.CustodianResultsDirectory,
                             hygieiaDesc.getHygieiaJenkinsName(), HygieiaUtils.getBuildCollectionId(buildResponse.getResponseValue()));
 
             if (request != null) {
-                HygieiaResponse testResponse = hygieiaService.publishTestResults(request);
+                HygieiaResponse testResponse = hygieiaService.publishCustodianResults(request);
                 if (testResponse.getResponseCode() == HttpStatus.SC_CREATED) {
                     listener.getLogger().println("Hygieia: Published Test Data. " + testResponse.toString());
                 } else {

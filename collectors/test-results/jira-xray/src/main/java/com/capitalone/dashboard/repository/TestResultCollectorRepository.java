@@ -1,12 +1,12 @@
 package com.capitalone.dashboard.repository;
 
-import com.capitalone.dashboard.model.TestResultCollector;
+import com.capitalone.dashboard.model.CustodianResultCollector;
 import org.springframework.stereotype.Component;
 
 /**
- * Repository for {@link TestResultCollector}.
+ * Repository for {@link CustodianResultCollector}.
  */
 @Component
-public interface TestResultCollectorRepository extends
-        BaseCollectorRepository<TestResultCollector> {
+public interface CustodianResultCollectorRepository extends
+        BaseCollectorRepository<CustodianResultCollector> {
 }

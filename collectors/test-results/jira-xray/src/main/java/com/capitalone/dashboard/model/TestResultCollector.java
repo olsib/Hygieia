@@ -8,16 +8,16 @@ import org.springframework.stereotype.Component;
  * settings required for source system data connection (e.g., API tokens, etc.)
  */
 @Component
-public class TestResultCollector extends Collector {
+public class CustodianResultCollector extends Collector {
     /**
      * Creates a static prototype of the Feature Collector, which includes any
      * specific settings or configuration required for the use of this
      * collector, including settings for connecting to any source systems.
      *
-     * @return A configured TestResult Collector prototype
+     * @return A configured CustodianResult Collector prototype
      */
-    public static TestResultCollector prototype() {
-        TestResultCollector protoType = new TestResultCollector();
+    public static CustodianResultCollector prototype() {
+        CustodianResultCollector protoType = new CustodianResultCollector();
         protoType.setName(FeatureCollectorConstants.JIRA_XRAY);
         protoType.setOnline(true);
         protoType.setEnabled(true);

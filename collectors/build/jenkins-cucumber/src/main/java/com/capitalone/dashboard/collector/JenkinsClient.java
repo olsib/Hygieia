@@ -2,7 +2,7 @@ package com.capitalone.dashboard.collector;
 
 import com.capitalone.dashboard.model.Build;
 import com.capitalone.dashboard.model.JenkinsJob;
-import com.capitalone.dashboard.model.TestResult;
+import com.capitalone.dashboard.model.CustodianResult;
 
 import java.util.Map;
 import java.util.Set;
@@ -31,12 +31,12 @@ public interface JenkinsClient {
 
     /**
      * This method is responsible for going to the Jenkins systems, accessing a specific build, getting the
-     * (cucumber) results.json file, and parsing it to a TestResult
+     * (cucumber) results.json file, and parsing it to a CustodianResult
      *
      * @param buildUrl url of the Jenkins build
-     * @return a TestResult
+     * @return a CustodianResult
      */
-    TestResult getCucumberTestResult(String buildUrl);
+    CustodianResult getCucumberCustodianResult(String buildUrl);
 
     Build getLastSuccessfulBuild (String buildUrl);
 }

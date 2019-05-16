@@ -27,15 +27,15 @@ public class ApiSettings {
     private String featureIDPattern;
     @Value("${traceabilityThreshold:80.0}")
     private double traceabilityThreshold;
-    @Value("${testResultThreshold:95.0}")
-    private double testResultThreshold;
+    @Value("${CustodianResultThreshold:95.0}")
+    private double CustodianResultThreshold;
     private List<String> validStoryStatus;
-    @Value("${testResultSuccessPriority:Low}")
-    public String testResultSuccessPriority;
-    @Value("${testResultFailurePriority:High}")
-    public String testResultFailurePriority;
-    @Value("${testResultSkippedPriority:High}")
-    public String testResultSkippedPriority;
+    @Value("${CustodianResultSuccessPriority:Low}")
+    public String CustodianResultSuccessPriority;
+    @Value("${CustodianResultFailurePriority:High}")
+    public String CustodianResultFailurePriority;
+    @Value("${CustodianResultSkippedPriority:High}")
+    public String CustodianResultSkippedPriority;
     private String serviceAccountRegEx;
     @Value("${highSecurityVulnerabilitiesAge:0}")
     private int highSecurityVulnerabilitiesAge;
@@ -150,36 +150,36 @@ public class ApiSettings {
         this.serviceAccountRegEx = serviceAccountRegEx;
     }
 
-    public void setTestResultSuccessPriority(String testResultSuccessPriority) {
-        this.testResultSuccessPriority = testResultSuccessPriority;
+    public void setCustodianResultSuccessPriority(String CustodianResultSuccessPriority) {
+        this.CustodianResultSuccessPriority = CustodianResultSuccessPriority;
     }
 
-    public String getTestResultSuccessPriority() {
-        return testResultSuccessPriority;
+    public String getCustodianResultSuccessPriority() {
+        return CustodianResultSuccessPriority;
     }
 
-    public void setTestResultFailurePriority(String testResultFailurePriority) {
-        this.testResultFailurePriority = testResultFailurePriority;
+    public void setCustodianResultFailurePriority(String CustodianResultFailurePriority) {
+        this.CustodianResultFailurePriority = CustodianResultFailurePriority;
     }
 
-    public void setTestResultSkippedPriority(String testResultSkippedPriority) {
-        this.testResultSkippedPriority = testResultSkippedPriority;
+    public void setCustodianResultSkippedPriority(String CustodianResultSkippedPriority) {
+        this.CustodianResultSkippedPriority = CustodianResultSkippedPriority;
     }
 
-    public String getTestResultFailurePriority() {
-        return testResultFailurePriority;
+    public String getCustodianResultFailurePriority() {
+        return CustodianResultFailurePriority;
     }
 
-    public String getTestResultSkippedPriority() {
-        return testResultSkippedPriority;
+    public String getCustodianResultSkippedPriority() {
+        return CustodianResultSkippedPriority;
     }
 
-    public double getTestResultThreshold() {
-        return testResultThreshold;
+    public double getCustodianResultThreshold() {
+        return CustodianResultThreshold;
     }
 
-    public void setTestResultThreshold(double testResultThreshold) {
-        this.testResultThreshold = testResultThreshold;
+    public void setCustodianResultThreshold(double CustodianResultThreshold) {
+        this.CustodianResultThreshold = CustodianResultThreshold;
     }
 
     public int getHighSecurityVulnerabilitiesAge() {

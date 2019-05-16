@@ -6,7 +6,7 @@ import com.capitalone.dashboard.model.CollectorItem;
 import com.capitalone.dashboard.model.CollectorType;
 import com.capitalone.dashboard.model.Dashboard;
 import com.capitalone.dashboard.model.DashboardType;
-import com.capitalone.dashboard.model.TestResult;
+import com.capitalone.dashboard.model.CustodianResult;
 import com.capitalone.dashboard.model.TestSuiteType;
 import com.capitalone.dashboard.model.TestCapability;
 import com.capitalone.dashboard.model.TestSuite;
@@ -16,9 +16,9 @@ import com.capitalone.dashboard.model.Feature;
 import com.capitalone.dashboard.model.StoryIndicator;
 
 import com.capitalone.dashboard.repository.FeatureRepository;
-import com.capitalone.dashboard.repository.TestResultRepository;
-import com.capitalone.dashboard.response.TestResultsAuditResponse;
-import com.capitalone.dashboard.status.TestResultAuditStatus;
+import com.capitalone.dashboard.repository.CustodianResultRepository;
+import com.capitalone.dashboard.response.CustodianResultsAuditResponse;
+import com.capitalone.dashboard.status.CustodianResultAuditStatus;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,11 +43,11 @@ import java.text.SimpleDateFormat;
 import java.util.stream.Collectors;
 
 @Component
-public class RegressionTestResultEvaluator extends Evaluator<TestResultsAuditResponse> {
+public class RegressionCustodianResultEvaluator extends Evaluator<CustodianResultsAuditResponse> {
 
-    private final TestResultRepository testResultRepository;
+    private final CustodianResultRepository CustodianResultRepository;
     private final FeatureRepository featureRepository;
-    private static final Logger LOGGER = LoggerFactory.getLogger(RegressionTestResultEvaluator.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(RegressionCustodianResultEvaluator.class);
     private long beginDate;
     private long endDate;
     private Dashboard dashboard;
@@ -65,28 +65,28 @@ public class RegressionTestResultEvaluator extends Evaluator<TestResultsAuditRes
     private static final String PRIORITY_HIGH = "High";
 
     @Autowired
-    public RegressionTestResultEvaluator(TestResultRepository testResultRepository, FeatureRepository featureRepository) {
-        this.testResultRepository = testResultRepository;
+    public RegressionCustodianResultEvaluator(CustodianResultRepository CustodianResultRepository, FeatureRepository featureRepository) {
+        this.CustodianResultRepository = CustodianResultRepository;
         this.featureRepository = featureRepository;
     }
 
     @Override
-    public Collection<TestResultsAuditResponse> evaluate(Dashboard dashboard, long beginDate, long endDate, Map<?, ?> dummy) throws AuditException {
+    public Collection<CustodianResultsAuditResponse> evaluate(Dashboard dashboard, long beginDate, long endDate, Map<?, ?> dummy) throws AuditException {
         this.beginDate = beginDate-1;
         this.endDate = endDate+1;
         this.dashboard = getDashboard(dashboard.getTitle(), DashboardType.Team);
         List<CollectorItem> testItems = getCollectorItems(this.dashboard, WIDGET_CODE_ANALYSIS, CollectorType.Test);
-        Collection<TestResultsAuditResponse> testResultsAuditResponse = new ArrayList<>();
+        Collection<CustodianResultsAuditResponse> CustodianResultsAuditResponse = new ArrayList<>();
         if (CollectionUtils.isEmpty(testItems)) {
             throw new AuditException("No tests configured", AuditException.NO_COLLECTOR_ITEM_CONFIGURED);
         }
-        testItems.forEach(testItem -> testResultsAuditResponse.add(getRegressionTestResultAudit(dashboard, testItem)));
-        return testResultsAuditResponse;
+        testItems.forEach(testItem -> CustodianResultsAuditResponse.add(getRegressionCustodianResultAudit(dashboard, testItem)));
+        return CustodianResultsAuditResponse;
     }
 
     @Override
-    public TestResultsAuditResponse evaluate(CollectorItem collectorItem, long beginDate, long endDate, Map<?, ?> data) {
-        return new TestResultsAuditResponse();
+    public CustodianResultsAuditResponse evaluate(CollectorItem collectorItem, long beginDate, long endDate, Map<?, ?> data) {
+        return new CustodianResultsAuditResponse();
     }
 
     /**
@@ -94,52 +94,52 @@ public class RegressionTestResultEvaluator extends Evaluator<TestResultsAuditRes
      * @param testItem
      * @return
      */
-    protected TestResultsAuditResponse getRegressionTestResultAudit(Dashboard dashboard, CollectorItem testItem) {
-        List<TestResult> testResults = testResultRepository.findByCollectorItemIdAndTimestampIsBetweenOrderByTimestampDesc(testItem.getId(), beginDate, endDate);
-        return performTestResultAudit(dashboard, testItem, testResults);
+    protected CustodianResultsAuditResponse getRegressionCustodianResultAudit(Dashboard dashboard, CollectorItem testItem) {
+        List<CustodianResult> CustodianResults = CustodianResultRepository.findByCollectorItemIdAndTimestampIsBetweenOrderByTimestampDesc(testItem.getId(), beginDate, endDate);
+        return performCustodianResultAudit(dashboard, testItem, CustodianResults);
     }
 
     /**
      * Perform test result audit
      *
      * @param testItem
-     * @param testResults
-     * @return testResultsAuditResponse
+     * @param CustodianResults
+     * @return CustodianResultsAuditResponse
      */
-    private TestResultsAuditResponse performTestResultAudit(Dashboard dashboard, CollectorItem testItem, List<TestResult> testResults) {
+    private CustodianResultsAuditResponse performCustodianResultAudit(Dashboard dashboard, CollectorItem testItem, List<CustodianResult> CustodianResults) {
 
-        TestResultsAuditResponse testResultsAuditResponse = new TestResultsAuditResponse();
-        testResultsAuditResponse.setAuditEntity(testItem.getOptions());
-        testResultsAuditResponse.setLastUpdated(testItem.getLastUpdated());
-        if (CollectionUtils.isEmpty(testResults) || !isValidTestResultTestSuitType(testResults)){
-            testResultsAuditResponse.addAuditStatus(TestResultAuditStatus.TEST_RESULT_MISSING);
-            return testResultsAuditResponse;
+        CustodianResultsAuditResponse CustodianResultsAuditResponse = new CustodianResultsAuditResponse();
+        CustodianResultsAuditResponse.setAuditEntity(testItem.getOptions());
+        CustodianResultsAuditResponse.setLastUpdated(testItem.getLastUpdated());
+        if (CollectionUtils.isEmpty(CustodianResults) || !isValidCustodianResultTestSuitType(CustodianResults)){
+            CustodianResultsAuditResponse.addAuditStatus(CustodianResultAuditStatus.TEST_RESULT_MISSING);
+            return CustodianResultsAuditResponse;
         }
-        TestResult testResult = testResults.stream().sorted(Comparator.comparing(TestResult::getTimestamp).reversed()).findFirst().get();
+        CustodianResult CustodianResult = CustodianResults.stream().sorted(Comparator.comparing(CustodianResult::getTimestamp).reversed()).findFirst().get();
 
-        testResultsAuditResponse.setLastExecutionTime(testResult.getStartTime());
-        testResultsAuditResponse.setType(testResult.getType().toString());
-        testResultsAuditResponse.setFeatureTestResult(getFeatureTestResult(testResult));
-        testResultsAuditResponse = updateTraceabilityDetails(dashboard, testResult, testResultsAuditResponse);
+        CustodianResultsAuditResponse.setLastExecutionTime(CustodianResult.getStartTime());
+        CustodianResultsAuditResponse.setType(CustodianResult.getType().toString());
+        CustodianResultsAuditResponse.setFeatureCustodianResult(getFeatureCustodianResult(CustodianResult));
+        CustodianResultsAuditResponse = updateTraceabilityDetails(dashboard, CustodianResult, CustodianResultsAuditResponse);
 
-        List<TestCapability> testCapabilities = testResult.getTestCapabilities().stream().collect(Collectors.toList());
-        testResultsAuditResponse = updateTestResultAuditStatuses(testCapabilities, testResultsAuditResponse);
+        List<TestCapability> testCapabilities = CustodianResult.getTestCapabilities().stream().collect(Collectors.toList());
+        CustodianResultsAuditResponse = updateCustodianResultAuditStatuses(testCapabilities, CustodianResultsAuditResponse);
 
         // Clearing for readability in response
         for(TestCapability test: testCapabilities){
             test.setTestSuites(null);
         }
-        testResultsAuditResponse.setTestCapabilities(testCapabilities);
-        return testResultsAuditResponse;
+        CustodianResultsAuditResponse.setTestCapabilities(testCapabilities);
+        return CustodianResultsAuditResponse;
 
     }
 
     /***
      * Update traceability details with calculated percent value
-     * @param testResult,testResultsAuditResponse
-     * @return testResultsAuditResponse
+     * @param CustodianResult,CustodianResultsAuditResponse
+     * @return CustodianResultsAuditResponse
      */
-    private TestResultsAuditResponse updateTraceabilityDetails(Dashboard dashboard, TestResult testResult, TestResultsAuditResponse testResultsAuditResponse) {
+    private CustodianResultsAuditResponse updateTraceabilityDetails(Dashboard dashboard, CustodianResult CustodianResult, CustodianResultsAuditResponse CustodianResultsAuditResponse) {
 
         Traceability traceability = new Traceability();
         List<String> totalStoriesList = new ArrayList<>();
@@ -159,47 +159,47 @@ public class RegressionTestResultEvaluator extends Evaluator<TestResultsAuditRes
             if(isValidChangeDate(feature)) {
                 if(this.isValidStoryStatus(feature.getsStatus())){
                     totalCompletedStories.add(feature.getsNumber());
-                    storyAuditStatusMap.put(feature.getsNumber(), TestResultAuditStatus.TEST_RESULTS_TRACEABILITY_STORY_MATCH.name());
+                    storyAuditStatusMap.put(feature.getsNumber(), CustodianResultAuditStatus.TEST_RESULTS_TRACEABILITY_STORY_MATCH.name());
                 } else{
-                    storyAuditStatusMap.put(feature.getsNumber(), TestResultAuditStatus.TEST_RESULTS_TRACEABILITY_STORY_STATUS_INVALID.name());
+                    storyAuditStatusMap.put(feature.getsNumber(), CustodianResultAuditStatus.TEST_RESULTS_TRACEABILITY_STORY_STATUS_INVALID.name());
                 }
             } else {
-                storyAuditStatusMap.put(feature.getsNumber(), TestResultAuditStatus.TEST_RESULTS_TRACEABILITY_STORY_NOT_FOUND.name());
+                storyAuditStatusMap.put(feature.getsNumber(), CustodianResultAuditStatus.TEST_RESULTS_TRACEABILITY_STORY_NOT_FOUND.name());
             }
             totalStories.add(storyAuditStatusMap);
         });
         if (totalCompletedStories.size() > NumberUtils.INTEGER_ZERO) {
-            int totalStoryIndicatorCount = getTotalStoryIndicators(testResult).size();
+            int totalStoryIndicatorCount = getTotalStoryIndicators(CustodianResult).size();
             double percentage = (totalStoryIndicatorCount * 100) / totalCompletedStories.size();
             traceability.setPercentage(percentage);
 
             if (traceabilityThreshold == NumberUtils.DOUBLE_ZERO) {
-                testResultsAuditResponse.addAuditStatus(TestResultAuditStatus.TEST_RESULTS_TRACEABILITY_THRESHOLD_DEFAULT);
+                CustodianResultsAuditResponse.addAuditStatus(CustodianResultAuditStatus.TEST_RESULTS_TRACEABILITY_THRESHOLD_DEFAULT);
             }
             if(percentage == NumberUtils.DOUBLE_ZERO){
-                testResultsAuditResponse.addAuditStatus(TestResultAuditStatus.TEST_RESULTS_TRACEABILITY_NOT_FOUND);
+                CustodianResultsAuditResponse.addAuditStatus(CustodianResultAuditStatus.TEST_RESULTS_TRACEABILITY_NOT_FOUND);
             }
         } else {
-            testResultsAuditResponse.addAuditStatus(TestResultAuditStatus.TEST_RESULTS_TRACEABILITY_NOT_FOUND_IN_GIVEN_DATE_RANGE);
+            CustodianResultsAuditResponse.addAuditStatus(CustodianResultAuditStatus.TEST_RESULTS_TRACEABILITY_NOT_FOUND_IN_GIVEN_DATE_RANGE);
         }
         traceability.setTotalCompletedStories(totalCompletedStories);
         traceability.setTotalStories(totalStories);
         traceability.setTotalStoryCount(totalStories.size());
         traceability.setThreshold(traceabilityThreshold);
-        testResultsAuditResponse.setTraceability(traceability);
-        return testResultsAuditResponse;
+        CustodianResultsAuditResponse.setTraceability(traceability);
+        return CustodianResultsAuditResponse;
     }
 
     /**
      * Get story indicators by matching test case tags with feature stories
-     * @param testResult
+     * @param CustodianResult
      * @return
      */
-    private  List<StoryIndicator> getTotalStoryIndicators(TestResult testResult) {
+    private  List<StoryIndicator> getTotalStoryIndicators(CustodianResult CustodianResult) {
 
         Pattern featureIdPattern = Pattern.compile(settings.getFeatureIDPattern());
         List<StoryIndicator> totalStoryIndicatorList = new ArrayList<>();
-        testResult.getTestCapabilities().stream()
+        CustodianResult.getTestCapabilities().stream()
                 .map(TestCapability::getTestSuites).flatMap(Collection::stream)
                 .map(TestSuite::getTestCases).flatMap(Collection::stream)
                 .forEach(testCase -> {
@@ -256,7 +256,7 @@ public class RegressionTestResultEvaluator extends Evaluator<TestResultsAuditRes
             changeDate = dt.getTime();
         } catch(ParseException e) {
             e.printStackTrace();
-            LOGGER.error("Error in RegressionTestResultEvaluator.getEpochChangeDate() - Unable to match date pattern - " + e.getMessage());
+            LOGGER.error("Error in RegressionCustodianResultEvaluator.getEpochChangeDate() - Unable to match date pattern - " + e.getMessage());
         }
 
         return changeDate;
@@ -293,12 +293,12 @@ public class RegressionTestResultEvaluator extends Evaluator<TestResultsAuditRes
 
     /**
      * Check whether the test result test suit type is valid
-     * @param testResults
+     * @param CustodianResults
      * @return
      */
-    public boolean isValidTestResultTestSuitType(List<TestResult> testResults) {
-        return testResults.stream()
-                .anyMatch(testResult -> testResult.getType().equals(TestSuiteType.Functional)
+    public boolean isValidCustodianResultTestSuitType(List<CustodianResult> CustodianResults) {
+        return CustodianResults.stream()
+                .anyMatch(CustodianResult -> testResult.getType().equals(TestSuiteType.Functional)
                         || testResult.getType().equals(TestSuiteType.Manual)
                         || testResult.getType().equals(TestSuiteType.Regression));
     }

@@ -4,11 +4,11 @@ import com.capitalone.dashboard.editors.CaseInsensitiveTestSuiteTypeEditor;
 import com.capitalone.dashboard.misc.HygieiaException;
 import com.capitalone.dashboard.model.CodeQualityType;
 import com.capitalone.dashboard.model.DataResponse;
-import com.capitalone.dashboard.model.TestResult;
+import com.capitalone.dashboard.model.CustodianResult;
 import com.capitalone.dashboard.request.PerfTestDataCreateRequest;
 import com.capitalone.dashboard.request.TestDataCreateRequest;
-import com.capitalone.dashboard.request.TestResultRequest;
-import com.capitalone.dashboard.service.TestResultService;
+import com.capitalone.dashboard.request.CustodianResultRequest;
+import com.capitalone.dashboard.service.CustodianResultService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,12 +25,12 @@ import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 @RestController
-public class TestResultController {
-    private final TestResultService testResultService;
+public class CustodianResultController {
+    private final CustodianResultService CustodianResultService;
 
     @Autowired
-    public TestResultController(TestResultService testResultService) {
-        this.testResultService = testResultService;
+    public CustodianResultController(CustodianResultService CustodianResultService) {
+        this.CustodianResultService = CustodianResultService;
     }
 
     @InitBinder
@@ -39,15 +39,15 @@ public class TestResultController {
     }
 
     @RequestMapping(value = "/quality/test", method = GET, produces = APPLICATION_JSON_VALUE)
-    public DataResponse<Iterable<TestResult>> qualityData(@Valid TestResultRequest request) {
-        return testResultService.search(request);
+    public DataResponse<Iterable<CustodianResult>> qualityData(@Valid CustodianResultRequest request) {
+        return CustodianResultService.search(request);
     }
 
 
     @RequestMapping(value = "/quality/test", method = POST,
                 consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
         public ResponseEntity<String> createTest(@Valid @RequestBody TestDataCreateRequest request) throws HygieiaException {
-            String response = testResultService.create(request);
+            String response = CustodianResultService.create(request);
             return ResponseEntity
                     .status(HttpStatus.CREATED)
                     .body(response);
@@ -56,25 +56,25 @@ public class TestResultController {
     @RequestMapping(value = "/v2/quality/test", method = POST,
             consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<String> createTestV2(@Valid @RequestBody TestDataCreateRequest request) throws HygieiaException {
-        String response = testResultService.createV2(request);
+        String response = CustodianResultService.createV2(request);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(response);
     }
 
-    @RequestMapping(value = "/quality/testresult", method = POST,
+    @RequestMapping(value = "/quality/CustodianResult", method = POST,
             consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<String> createPerfTest(@Valid @RequestBody PerfTestDataCreateRequest request) throws HygieiaException {
-        String response = testResultService.createPerf(request);
+        String response = CustodianResultService.createPerf(request);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(response);
     }
 
-    @RequestMapping(value = "/v2/quality/testresult", method = POST,
+    @RequestMapping(value = "/v2/quality/CustodianResult", method = POST,
             consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<String> createPerfTestV2(@Valid @RequestBody PerfTestDataCreateRequest request) throws HygieiaException {
-        String response = testResultService.createPerfV2(request);
+        String response = CustodianResultService.createPerfV2(request);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(response);

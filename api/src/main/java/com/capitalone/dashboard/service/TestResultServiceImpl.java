@@ -6,15 +6,15 @@ import com.capitalone.dashboard.model.CollectorItem;
 import com.capitalone.dashboard.model.CollectorType;
 import com.capitalone.dashboard.model.Component;
 import com.capitalone.dashboard.model.DataResponse;
-import com.capitalone.dashboard.model.QTestResult;
-import com.capitalone.dashboard.model.TestResult;
+import com.capitalone.dashboard.model.QCustodianResult;
+import com.capitalone.dashboard.model.CustodianResult;
 import com.capitalone.dashboard.repository.CollectorRepository;
 import com.capitalone.dashboard.repository.ComponentRepository;
-import com.capitalone.dashboard.repository.TestResultRepository;
+import com.capitalone.dashboard.repository.CustodianResultRepository;
 import com.capitalone.dashboard.request.CollectorRequest;
 import com.capitalone.dashboard.request.PerfTestDataCreateRequest;
 import com.capitalone.dashboard.request.TestDataCreateRequest;
-import com.capitalone.dashboard.request.TestResultRequest;
+import com.capitalone.dashboard.request.CustodianResultRequest;
 import com.google.common.collect.Lists;
 import com.mysema.query.BooleanBuilder;
 import org.apache.commons.lang.StringUtils;
@@ -31,32 +31,32 @@ import java.util.List;
 import java.util.Map;
 
 @Service
-public class TestResultServiceImpl implements TestResultService {
+public class CustodianResultServiceImpl implements CustodianResultService {
 
-    private final TestResultRepository testResultRepository;
+    private final CustodianResultRepository CustodianResultRepository;
     private final ComponentRepository componentRepository;
     private final CollectorRepository collectorRepository;
     private final CollectorService collectorService;
 
     @Autowired
-    public TestResultServiceImpl(TestResultRepository testResultRepository,
+    public CustodianResultServiceImpl(CustodianResultRepository CustodianResultRepository,
                                  ComponentRepository componentRepository,
                                  CollectorRepository collectorRepository,
                                  CollectorService collectorService) {
-        this.testResultRepository = testResultRepository;
+        this.CustodianResultRepository = CustodianResultRepository;
         this.componentRepository = componentRepository;
         this.collectorRepository = collectorRepository;
         this.collectorService = collectorService;
     }
 
     @Override
-    public DataResponse<Iterable<TestResult>> search(TestResultRequest request) {
+    public DataResponse<Iterable<CustodianResult>> search(CustodianResultRequest request) {
         Component component = componentRepository.findOne(request.getComponentId());
 
         if ((component == null) || !component.getCollectorItems().containsKey(CollectorType.Test)) {
             return new DataResponse<>(null, 0L);
         }
-        List<TestResult> result = new ArrayList<>();
+        List<CustodianResult> result = new ArrayList<>();
         validateAllCollectorItems(request, component, result);
         //One collector per Type. get(0) is hardcoded.
         if (!CollectionUtils.isEmpty(component.getCollectorItems().get(CollectorType.Test)) && (component.getCollectorItems().get(CollectorType.Test).get(0) != null)) {
@@ -71,56 +71,56 @@ public class TestResultServiceImpl implements TestResultService {
 
 
 
-    private void validateAllCollectorItems(TestResultRequest request, Component component, List<TestResult> result) {
+    private void validateAllCollectorItems(CustodianResultRequest request, Component component, List<CustodianResult> result) {
         // add all test result repos
         component.getCollectorItems().get(CollectorType.Test).forEach(item -> {
-            QTestResult testResult = new QTestResult("testResult");
+            QCustodianResult CustodianResult = new QCustodianResult("CustodianResult");
             BooleanBuilder builder = new BooleanBuilder();
-            builder.and(testResult.collectorItemId.eq(item.getId()));
-            validateStartDateRange(request, testResult, builder);
-            validateEndDateRange(request, testResult, builder);
-            validateDurationRange(request, testResult, builder);
-            validateTestCapabilities(request, testResult, builder);
-            addAllTestResultRepositories(request, result, testResult, builder);
+            builder.and(CustodianResult.collectorItemId.eq(item.getId()));
+            validateStartDateRange(request, CustodianResult, builder);
+            validateEndDateRange(request, CustodianResult, builder);
+            validateDurationRange(request, CustodianResult, builder);
+            validateTestCapabilities(request, CustodianResult, builder);
+            addAllCustodianResultRepositories(request, result, CustodianResult, builder);
         });
     }
 
-    private void addAllTestResultRepositories(TestResultRequest request, List<TestResult> result, QTestResult testResult, BooleanBuilder builder) {
+    private void addAllCustodianResultRepositories(CustodianResultRequest request, List<CustodianResult> result, QCustodianResult CustodianResult, BooleanBuilder builder) {
         if (request.getMax() == null) {
-            result.addAll(Lists.newArrayList(testResultRepository.findAll(builder.getValue(), testResult.timestamp.desc())));
+            result.addAll(Lists.newArrayList(CustodianResultRepository.findAll(builder.getValue(), CustodianResult.timestamp.desc())));
         } else {
             PageRequest pageRequest = new PageRequest(0, request.getMax(), Sort.Direction.DESC, "timestamp");
-            result.addAll(Lists.newArrayList(testResultRepository.findAll(builder.getValue(), pageRequest).getContent()));
+            result.addAll(Lists.newArrayList(CustodianResultRepository.findAll(builder.getValue(), pageRequest).getContent()));
         }
     }
 
-    private void validateTestCapabilities(TestResultRequest request, QTestResult testResult, BooleanBuilder builder) {
+    private void validateTestCapabilities(CustodianResultRequest request, QCustodianResult CustodianResult, BooleanBuilder builder) {
         if (!request.getTypes().isEmpty()) {
-            builder.and(testResult.testCapabilities.any().type.in(request.getTypes()));
+            builder.and(CustodianResult.testCapabilities.any().type.in(request.getTypes()));
         }
     }
 
-    private void validateDurationRange(TestResultRequest request, QTestResult testResult, BooleanBuilder builder) {
+    private void validateDurationRange(CustodianResultRequest request, QCustodianResult CustodianResult, BooleanBuilder builder) {
         if (request.validDurationRange()) {
-            builder.and(testResult.duration.between(request.getDurationGreaterThan(), request.getDurationLessThan()));
+            builder.and(CustodianResult.duration.between(request.getDurationGreaterThan(), request.getDurationLessThan()));
         }
     }
 
-    private void validateEndDateRange(TestResultRequest request, QTestResult testResult, BooleanBuilder builder) {
+    private void validateEndDateRange(CustodianResultRequest request, QCustodianResult CustodianResult, BooleanBuilder builder) {
         if (request.validEndDateRange()) {
-            builder.and(testResult.endTime.between(request.getEndDateBegins(), request.getEndDateEnds()));
+            builder.and(CustodianResult.endTime.between(request.getEndDateBegins(), request.getEndDateEnds()));
         }
     }
 
-    private void validateStartDateRange(TestResultRequest request, QTestResult testResult, BooleanBuilder builder) {
+    private void validateStartDateRange(CustodianResultRequest request, QCustodianResult CustodianResult, BooleanBuilder builder) {
         if (request.validStartDateRange()) {
-            builder.and(testResult.startTime.between(request.getStartDateBegins(), request.getStartDateEnds()));
+            builder.and(CustodianResult.startTime.between(request.getStartDateBegins(), request.getStartDateEnds()));
         }
     }
 
-    private Iterable<TestResult> pruneToDepth(List<TestResult> results, Integer depth) {
+    private Iterable<CustodianResult> pruneToDepth(List<CustodianResult> results, Integer depth) {
         // Prune the response to the requested depth
-        // 0 - TestResult
+        // 0 - CustodianResult
         // 1 - TestCapability
         // 2 - TestSuite
         // 3 - TestCase
@@ -155,7 +155,7 @@ public class TestResultServiceImpl implements TestResultService {
     }
 
 
-    protected TestResult createTest(TestDataCreateRequest request) throws HygieiaException {
+    protected CustodianResult createTest(TestDataCreateRequest request) throws HygieiaException {
         /*
           Step 1: create Collector if not there
           Step 2: create Collector item if not there
@@ -174,32 +174,32 @@ public class TestResultServiceImpl implements TestResultService {
         }
 
 
-        TestResult testResult = createTest(collectorItem, request);
+        CustodianResult CustodianResult = createTest(collectorItem, request);
 
 
-        if (testResult == null) {
+        if (CustodianResult == null) {
             throw new HygieiaException("Failed inserting/updating Test information.", HygieiaException.ERROR_INSERTING_DATA);
         }
 
-        return testResult;
+        return CustodianResult;
 
     }
 
     @Override
     public String create(TestDataCreateRequest request) throws HygieiaException {
-        TestResult testResult = createTest(request);
-        return testResult.getId().toString();
+        CustodianResult CustodianResult = createTest(request);
+        return CustodianResult.getId().toString();
     }
 
     @Override
     public String createV2(TestDataCreateRequest request) throws HygieiaException {
-        TestResult testResult = createTest(request);
-        return testResult.getId().toString() + "," + testResult.getCollectorItemId().toString();
+        CustodianResult CustodianResult = createTest(request);
+        return CustodianResult.getId().toString() + "," + CustodianResult.getCollectorItemId().toString();
     }
 
 
 
-    protected TestResult createPerfTest(PerfTestDataCreateRequest request) throws HygieiaException {
+    protected CustodianResult createPerfTest(PerfTestDataCreateRequest request) throws HygieiaException {
         /**
          * Step 1: create performance Collector if not there
          * Step 2: create Perfomance Collector item if not there
@@ -213,24 +213,24 @@ public class TestResultServiceImpl implements TestResultService {
         if (collectorItem == null) {
             throw new HygieiaException("Failed creating Test collector item.", HygieiaException.COLLECTOR_ITEM_CREATE_ERROR);
         }
-        TestResult testResult = createPerfTest(collectorItem, request);
-        if (testResult == null) {
+        CustodianResult CustodianResult = createPerfTest(collectorItem, request);
+        if (CustodianResult == null) {
             throw new HygieiaException("Failed inserting/updating Test information.", HygieiaException.ERROR_INSERTING_DATA);
         }
-        return testResult;
+        return CustodianResult;
 
     }
 
     @Override
     public String createPerf(PerfTestDataCreateRequest request) throws HygieiaException {
-        TestResult testResult = createPerfTest(request);
-        return testResult.getId().toString();
+        CustodianResult CustodianResult = createPerfTest(request);
+        return CustodianResult.getId().toString();
     }
 
     @Override
     public String createPerfV2(PerfTestDataCreateRequest request) throws HygieiaException {
-        TestResult testResult = createPerfTest(request);
-        return testResult.getId().toString() + "," + testResult.getCollectorItemId().toString();
+        CustodianResult CustodianResult = createPerfTest(request);
+        return CustodianResult.getId().toString() + "," + CustodianResult.getCollectorItemId().toString();
     }
 
     private Collector createCollector() {
@@ -305,63 +305,63 @@ public class TestResultServiceImpl implements TestResultService {
     }
 
 
-    private TestResult createTest(CollectorItem collectorItem, TestDataCreateRequest request) {
-        TestResult testResult = testResultRepository.findByCollectorItemIdAndExecutionId(collectorItem.getId(),
+    private CustodianResult createTest(CollectorItem collectorItem, TestDataCreateRequest request) {
+        CustodianResult CustodianResult = CustodianResultRepository.findByCollectorItemIdAndExecutionId(collectorItem.getId(),
                 request.getExecutionId());
-        if (testResult == null) {
-            testResult = new TestResult();
+        if (CustodianResult == null) {
+            CustodianResult = new CustodianResult();
         }
 
-        testResult.setTargetAppName(request.getTargetAppName());
-        testResult.setTargetEnvName(request.getTargetEnvName());
-        testResult.setCollectorItemId(collectorItem.getId());
-        testResult.setType(request.getType());
-        testResult.setDescription(request.getDescription());
-        testResult.setDuration(request.getDuration());
-        testResult.setEndTime(request.getEndTime());
-        testResult.setExecutionId(request.getExecutionId());
-        testResult.setFailureCount(request.getFailureCount());
-        testResult.setSkippedCount(request.getSkippedCount());
-        testResult.setStartTime(request.getStartTime());
-        testResult.setSuccessCount(request.getSuccessCount());
+        CustodianResult.setTargetAppName(request.getTargetAppName());
+        CustodianResult.setTargetEnvName(request.getTargetEnvName());
+        CustodianResult.setCollectorItemId(collectorItem.getId());
+        CustodianResult.setType(request.getType());
+        CustodianResult.setDescription(request.getDescription());
+        CustodianResult.setDuration(request.getDuration());
+        CustodianResult.setEndTime(request.getEndTime());
+        CustodianResult.setExecutionId(request.getExecutionId());
+        CustodianResult.setFailureCount(request.getFailureCount());
+        CustodianResult.setSkippedCount(request.getSkippedCount());
+        CustodianResult.setStartTime(request.getStartTime());
+        CustodianResult.setSuccessCount(request.getSuccessCount());
         if(request.getTimestamp() == 0) request.setTimestamp(System.currentTimeMillis());
-        testResult.setTimestamp(request.getTimestamp());
-        testResult.setTotalCount(request.getTotalCount());
-        testResult.setUnknownStatusCount(request.getUnknownStatusCount());
-        testResult.setUrl(request.getTestJobUrl());
-        testResult.getTestCapabilities().addAll(request.getTestCapabilities());
-        testResult.setBuildId(new ObjectId(request.getTestJobId()));
+        CustodianResult.setTimestamp(request.getTimestamp());
+        CustodianResult.setTotalCount(request.getTotalCount());
+        CustodianResult.setUnknownStatusCount(request.getUnknownStatusCount());
+        CustodianResult.setUrl(request.getTestJobUrl());
+        CustodianResult.getTestCapabilities().addAll(request.getTestCapabilities());
+        CustodianResult.setBuildId(new ObjectId(request.getTestJobId()));
 
-        return testResultRepository.save(testResult);
+        return CustodianResultRepository.save(CustodianResult);
     }
 
-    private TestResult createPerfTest(CollectorItem collectorItem, PerfTestDataCreateRequest request) {
-        TestResult testResult = testResultRepository.findByCollectorItemIdAndExecutionId(collectorItem.getId(),
+    private CustodianResult createPerfTest(CollectorItem collectorItem, PerfTestDataCreateRequest request) {
+        CustodianResult CustodianResult = CustodianResultRepository.findByCollectorItemIdAndExecutionId(collectorItem.getId(),
                 request.getRunId());
-        if (testResult == null) {
-            testResult = new TestResult();
+        if (CustodianResult == null) {
+            CustodianResult = new CustodianResult();
         }
-        testResult.setTargetAppName(request.getTargetAppName());
-        testResult.setTargetEnvName(request.getTargetEnvName());
-        testResult.setCollectorItemId(collectorItem.getId());
-        testResult.setType(request.getType());
-        testResult.setDescription(request.getDescription());
-        testResult.setDuration(request.getDuration());
-        testResult.setEndTime(request.getEndTime());
-        testResult.setExecutionId(request.getRunId());
-        testResult.setFailureCount(request.getFailureCount());
-        testResult.setSkippedCount(request.getSkippedCount());
-        testResult.setStartTime(request.getStartTime());
-        testResult.setSuccessCount(request.getSuccessCount());
+        CustodianResult.setTargetAppName(request.getTargetAppName());
+        CustodianResult.setTargetEnvName(request.getTargetEnvName());
+        CustodianResult.setCollectorItemId(collectorItem.getId());
+        CustodianResult.setType(request.getType());
+        CustodianResult.setDescription(request.getDescription());
+        CustodianResult.setDuration(request.getDuration());
+        CustodianResult.setEndTime(request.getEndTime());
+        CustodianResult.setExecutionId(request.getRunId());
+        CustodianResult.setFailureCount(request.getFailureCount());
+        CustodianResult.setSkippedCount(request.getSkippedCount());
+        CustodianResult.setStartTime(request.getStartTime());
+        CustodianResult.setSuccessCount(request.getSuccessCount());
         if(request.getTimestamp() == 0) request.setTimestamp(System.currentTimeMillis());
-        testResult.setTimestamp(request.getTimestamp());
-        testResult.setTotalCount(request.getTotalCount());
-        testResult.setUnknownStatusCount(request.getUnknownStatusCount());
-        testResult.setUrl(request.getReportUrl());
-        testResult.getTestCapabilities().addAll(request.getTestCapabilities());
-        testResult.setDescription(request.getDescription());
-        testResult.setResultStatus(request.getResultStatus());
-        return testResultRepository.save(testResult);
+        CustodianResult.setTimestamp(request.getTimestamp());
+        CustodianResult.setTotalCount(request.getTotalCount());
+        CustodianResult.setUnknownStatusCount(request.getUnknownStatusCount());
+        CustodianResult.setUrl(request.getReportUrl());
+        CustodianResult.getTestCapabilities().addAll(request.getTestCapabilities());
+        CustodianResult.setDescription(request.getDescription());
+        CustodianResult.setResultStatus(request.getResultStatus());
+        return CustodianResultRepository.save(CustodianResult);
     }
 
 }

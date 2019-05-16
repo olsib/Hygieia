@@ -129,7 +129,7 @@
 
 
                 // get the most recent record for current metric
-                var latestResult = rows[0];
+                var laCustodianResult = rows[0];
 
                 // use $timeout so that it will apply on the next digest
                 $timeout(function() {
@@ -140,17 +140,17 @@
                         },
                         summary: {
                             codeIssues: {
-                                number: latestResult.violations,
+                                number: laCustodianResult.violations,
                                 trendUp: codeIssuesTrendUp,
                                 successState: !codeIssuesTrendUp
                             },
                             codeCoverage: {
-                                number: Math.round(latestResult.lineCoverage),
+                                number: Math.round(laCustodianResult.lineCoverage),
                                 trendUp: codeCoverageTrendUp,
                                 successState: codeCoverageTrendUp
                             },
                             unitTests: {
-                                number: Math.round(latestResult.testSuccessDensity),
+                                number: Math.round(laCustodianResult.testSuccessDensity),
                                 trendUp: unitTestSuccessTrendUp,
                                 successState: unitTestSuccessTrendUp
                             }

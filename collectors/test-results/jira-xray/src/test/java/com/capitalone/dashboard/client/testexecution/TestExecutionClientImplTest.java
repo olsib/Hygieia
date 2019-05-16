@@ -3,7 +3,7 @@ package com.capitalone.dashboard.client.testexecution;
 
 import com.atlassian.jira.rest.client.internal.async.DisposableHttpClient;
 import com.atlassian.util.concurrent.Promise;
-import com.capitalone.dashboard.TestResultSettings;
+import com.capitalone.dashboard.CustodianResultSettings;
 
 import com.capitalone.dashboard.api.TestExecutionRestClient;
 import com.capitalone.dashboard.api.TestRunRestClient;
@@ -16,7 +16,7 @@ import com.capitalone.dashboard.core.client.TestExecutionRestClientImpl;
 import com.capitalone.dashboard.core.client.testexecution.TestExecutionClientImpl;
 import com.capitalone.dashboard.core.json.util.RendereableItem;
 import com.capitalone.dashboard.core.json.util.RendereableItemImpl;
-import com.capitalone.dashboard.model.TestResult;
+import com.capitalone.dashboard.model.CustodianResult;
 import com.capitalone.dashboard.model.CollectorType;
 import com.capitalone.dashboard.model.TestSuiteType;
 import com.capitalone.dashboard.model.TestCapability;
@@ -26,11 +26,11 @@ import com.capitalone.dashboard.model.TestCase;
 import com.capitalone.dashboard.model.TestCaseStep;
 import com.capitalone.dashboard.model.Feature;
 import com.capitalone.dashboard.model.FeatureIssueLink;
-import com.capitalone.dashboard.model.TestResultCollector;
+import com.capitalone.dashboard.model.CustodianResultCollector;
 import com.capitalone.dashboard.repository.CollectorItemRepository;
 import com.capitalone.dashboard.repository.FeatureRepository;
-import com.capitalone.dashboard.repository.TestResultCollectorRepository;
-import com.capitalone.dashboard.repository.TestResultRepository;
+import com.capitalone.dashboard.repository.CustodianResultCollectorRepository;
+import com.capitalone.dashboard.repository.CustodianResultRepository;
 
 import org.bson.types.ObjectId;
 import org.junit.Assert;
@@ -57,11 +57,11 @@ import java.util.ArrayList;
 @PrepareForTest(TestExecutionRestClientImpl.class)
 public class TestExecutionClientImplTest {
 
-    private TestResultSettings testResultSettings;
+    private CustodianResultSettings CustodianResultSettings;
     @Mock
-    private TestResultRepository testResultRepository;
+    private CustodianResultRepository CustodianResultRepository;
     @Mock
-    private TestResultCollectorRepository testResultCollectorRepository;
+    private CustodianResultCollectorRepository CustodianResultCollectorRepository;
     @Mock
     private FeatureRepository featureRepository;
     @Mock
@@ -72,7 +72,7 @@ public class TestExecutionClientImplTest {
     private Promise promise;
     @Mock
     private Promise promise1;
-    @Captor ArgumentCaptor<List<TestResult>> captor;
+    @Captor ArgumentCaptor<List<CustodianResult>> captor;
 
     @InjectMocks
     TestExecutionClientImpl testExecutionClientimpl;
@@ -80,9 +80,9 @@ public class TestExecutionClientImplTest {
     @Before
     public final void init() {
         MockitoAnnotations.initMocks(this);
-        testResultSettings = new TestResultSettings();
+        CustodianResultSettings = new CustodianResultSettings();
         JiraXRayRestClientSupplier restClientSupplierMock = Mockito.mock(JiraXRayRestClientSupplier.class);
-        Mockito.when(testResultCollectorRepository.findByCollectorTypeAndName(CollectorType.Test, "Jira XRay")).thenReturn(createCollector());
+        Mockito.when(CustodianResultCollectorRepository.findByCollectorTypeAndName(CollectorType.Test, "Jira XRay")).thenReturn(createCollector());
         Mockito.when(featureRepository.getStoryByNumber(Mockito.anyString())).thenReturn(createTest());
         JiraXRayRestClientImpl restClientMock =  Mockito.spy(new JiraXRayRestClientImpl(URI.create(""),httpClient));
         Mockito.when(restClientSupplierMock.get()).thenReturn(restClientMock);
@@ -130,24 +130,24 @@ public class TestExecutionClientImplTest {
             }
         });
         Mockito.when(promise1.claim()).thenReturn(createTestRuns());
-        testExecutionClientimpl = new TestExecutionClientImpl(testResultRepository, testResultCollectorRepository,
-                featureRepository, collectorItemRepository, testResultSettings, restClientSupplierMock);
-        testResultSettings.setPageSize(20);
+        testExecutionClientimpl = new TestExecutionClientImpl(CustodianResultRepository, CustodianResultCollectorRepository,
+                featureRepository, collectorItemRepository, CustodianResultSettings, restClientSupplierMock);
+        CustodianResultSettings.setPageSize(20);
     }
 
     @Test
-    public void updateMongoTestResultInformation(){
+    public void updateMongoCustodianResultInformation(){
 
         Mockito.when(featureRepository.getStoryByType("Test Execution")).thenReturn(createFeature());
-        int cnt = testExecutionClientimpl.updateTestResultInformation();
+        int cnt = testExecutionClientimpl.updateCustodianResultInformation();
         Assert.assertEquals(1, cnt);
-        Mockito.verify(testResultRepository, Mockito.times(1)).save(captor.capture());
-        TestResult testResult1 = captor.getAllValues().get(0).get(0);
-        Assert.assertEquals(null, testResult1.getCollectorItemId());
-        Assert.assertEquals("summary1001", testResult1.getDescription());
-        Assert.assertEquals("Hygieia",testResult1.getTargetAppName() );
-        Assert.assertEquals(TestSuiteType.Manual,testResult1.getType() );
-        Collection<TestCapability> testCapabilities = testResult1.getTestCapabilities();
+        Mockito.verify(CustodianResultRepository, Mockito.times(1)).save(captor.capture());
+        CustodianResult CustodianResult1 = captor.getAllValues().get(0).get(0);
+        Assert.assertEquals(null, CustodianResult1.getCollectorItemId());
+        Assert.assertEquals("summary1001", CustodianResult1.getDescription());
+        Assert.assertEquals("Hygieia",CustodianResult1.getTargetAppName() );
+        Assert.assertEquals(TestSuiteType.Manual,CustodianResult1.getType() );
+        Collection<TestCapability> testCapabilities = CustodianResult1.getTestCapabilities();
 
         for(TestCapability testCapability:testCapabilities) {
             Assert.assertEquals("summary1001", testCapability.getDescription());
@@ -240,10 +240,10 @@ public class TestExecutionClientImplTest {
         return tests;
     }
 
-    private List<TestResultCollector> createCollector(){
-        List<TestResultCollector> collectors = new ArrayList<>();
+    private List<CustodianResultCollector> createCollector(){
+        List<CustodianResultCollector> collectors = new ArrayList<>();
 
-        TestResultCollector collector = new TestResultCollector();
+        CustodianResultCollector collector = new CustodianResultCollector();
         collector.setId(ObjectId.get());
         collector.setCollectorType(CollectorType.Test);
         collector.setName("Jira Xray");

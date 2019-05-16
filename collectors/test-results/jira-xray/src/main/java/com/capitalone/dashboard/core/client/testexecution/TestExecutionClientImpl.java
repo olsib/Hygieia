@@ -1,6 +1,6 @@
 package com.capitalone.dashboard.core.client.testexecution;
 
-import com.capitalone.dashboard.TestResultSettings;
+import com.capitalone.dashboard.CustodianResultSettings;
 import com.capitalone.dashboard.api.domain.TestExecution;
 import com.capitalone.dashboard.api.domain.TestRun;
 import com.capitalone.dashboard.api.domain.TestStep;
@@ -8,7 +8,7 @@ import com.capitalone.dashboard.core.client.JiraXRayRestClientImpl;
 import com.capitalone.dashboard.core.client.JiraXRayRestClientSupplier;
 import com.capitalone.dashboard.model.CollectorItem;
 import com.capitalone.dashboard.model.Feature;
-import com.capitalone.dashboard.model.TestResult;
+import com.capitalone.dashboard.model.CustodianResult;
 import com.capitalone.dashboard.model.TestCase;
 import com.capitalone.dashboard.model.TestCaseStatus;
 import com.capitalone.dashboard.model.TestCaseStep;
@@ -17,12 +17,12 @@ import com.capitalone.dashboard.model.TestSuite;
 import com.capitalone.dashboard.model.TestSuiteType;
 import com.capitalone.dashboard.model.FeatureIssueLink;
 
-import com.capitalone.dashboard.model.TestResultCollector;
+import com.capitalone.dashboard.model.CustodianResultCollector;
 import com.capitalone.dashboard.model.CollectorType;
 import com.capitalone.dashboard.repository.CollectorItemRepository;
 import com.capitalone.dashboard.repository.FeatureRepository;
-import com.capitalone.dashboard.repository.TestResultCollectorRepository;
-import com.capitalone.dashboard.repository.TestResultRepository;
+import com.capitalone.dashboard.repository.CustodianResultCollectorRepository;
+import com.capitalone.dashboard.repository.CustodianResultRepository;
 import com.capitalone.dashboard.util.FeatureCollectorConstants;
 import com.google.common.collect.Lists;
 import org.apache.commons.collections4.CollectionUtils;
@@ -44,22 +44,22 @@ import java.util.stream.Collectors;
 
 public class TestExecutionClientImpl implements TestExecutionClient {
     private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(TestExecutionClientImpl.class);
-    private final TestResultSettings testResultSettings;
-    private final TestResultRepository testResultRepository;
-    private final TestResultCollectorRepository testResultCollectorRepository;
+    private final CustodianResultSettings CustodianResultSettings;
+    private final CustodianResultRepository CustodianResultRepository;
+    private final CustodianResultCollectorRepository CustodianResultCollectorRepository;
     private final FeatureRepository featureRepository;
     private final CollectorItemRepository collectorItemRepository;
     private JiraXRayRestClientImpl restClient;
     private final JiraXRayRestClientSupplier restClientSupplier;
     private List<TestCase> testCases = new ArrayList<>();
 
-    public TestExecutionClientImpl(TestResultRepository testResultRepository, TestResultCollectorRepository testResultCollectorRepository,
+    public TestExecutionClientImpl(CustodianResultRepository CustodianResultRepository, CustodianResultCollectorRepository CustodianResultCollectorRepository,
                                    FeatureRepository featureRepository, CollectorItemRepository collectorItemRepository,
-                                   TestResultSettings testResultSettings, JiraXRayRestClientSupplier restClientSupplier) {
-        this.testResultRepository = testResultRepository;
-        this.testResultCollectorRepository = testResultCollectorRepository;
+                                   CustodianResultSettings CustodianResultSettings, JiraXRayRestClientSupplier restClientSupplier) {
+        this.CustodianResultRepository = CustodianResultRepository;
+        this.CustodianResultCollectorRepository = CustodianResultCollectorRepository;
         this.featureRepository = featureRepository;
-        this.testResultSettings = testResultSettings;
+        this.CustodianResultSettings = CustodianResultSettings;
         this.restClientSupplier = restClientSupplier;
         this.collectorItemRepository = collectorItemRepository;
     }
@@ -78,9 +78,9 @@ public class TestExecutionClientImpl implements TestExecutionClient {
      *
      * @return
      */
-    public int updateTestResultInformation() {
+    public int updateCustodianResultInformation() {
         int count = 0;
-        int pageSize = testResultSettings.getPageSize();
+        int pageSize = CustodianResultSettings.getPageSize();
 
         boolean hasMore = true;
         List<Feature> testExecutions = featureRepository.getStoryByType("Test Execution");
@@ -129,24 +129,24 @@ public class TestExecutionClientImpl implements TestExecutionClient {
         }
 
         if (currentPagedTestExecutions != null) {
-            List<TestResult> testResultsToSave = new ArrayList<>();
+            List<CustodianResult> CustodianResultsToSave = new ArrayList<>();
 
             for (Feature testExec : currentPagedTestExecutions) {
 
                 // Set collectoritemid for manual test results
                 CollectorItem collectorItem = createCollectorItem(testExec);
-                TestResult testResult = testResultRepository.findByCollectorItemId(collectorItem.getId());
-                if(testResult == null) {
-                    testResult = new TestResult();
+                CustodianResult CustodianResult = CustodianResultRepository.findByCollectorItemId(collectorItem.getId());
+                if(CustodianResult == null) {
+                    CustodianResult = new CustodianResult();
                 }
-                testResult.setCollectorItemId(collectorItem.getId());
-                testResult.setDescription(testExec.getsName());
+                CustodianResult.setCollectorItemId(collectorItem.getId());
+                CustodianResult.setDescription(testExec.getsName());
 
-                testResult.setTargetAppName(testExec.getsProjectName());
-                testResult.setType(TestSuiteType.Manual);
+                CustodianResult.setTargetAppName(testExec.getsProjectName());
+                CustodianResult.setType(TestSuiteType.Manual);
                 try {
                     TestExecution testExecution = new TestExecution(new URI(testExec.getsUrl()), testExec.getsNumber(), Long.parseLong(testExec.getsId()));
-                    testResult.setUrl(testExecution.getSelf().toString());
+                    CustodianResult.setUrl(testExecution.getSelf().toString());
 
                     restClient = (JiraXRayRestClientImpl) restClientSupplier.get();
                     Iterable<TestExecution.Test> tests = restClient.getTestExecutionClient().getTests(testExecution).claim();
@@ -178,21 +178,21 @@ public class TestExecutionClientImpl implements TestExecutionClient {
 
                         if(failCount > 0) {
                             capability.setStatus(TestCaseStatus.Failure);
-                            testResult.setResultStatus("Failure");
+                            CustodianResult.setResultStatus("Failure");
                             testSuite.setStatus(TestCaseStatus.Failure);
-                            testResult.setFailureCount(1);
+                            CustodianResult.setFailureCount(1);
                             capability.setFailedTestSuiteCount(1);
                         } else if (totalCount == passCount){
                             capability.setStatus(TestCaseStatus.Success);
-                            testResult.setResultStatus("Success");
+                            CustodianResult.setResultStatus("Success");
                             testSuite.setStatus(TestCaseStatus.Success);
-                            testResult.setSuccessCount(1);
+                            CustodianResult.setSuccessCount(1);
                             capability.setSuccessTestSuiteCount(1);
                         } else {
                             capability.setStatus(TestCaseStatus.Skipped);
-                            testResult.setResultStatus("Skipped");
+                            CustodianResult.setResultStatus("Skipped");
                             testSuite.setStatus(TestCaseStatus.Skipped);
-                            testResult.setSkippedCount(1);
+                            CustodianResult.setSkippedCount(1);
                             capability.setSkippedTestSuiteCount(1);
                         }
 
@@ -200,17 +200,17 @@ public class TestExecutionClientImpl implements TestExecutionClient {
                         testSuites.add(testSuite);
                         capability.setTestSuites(testSuites);
                         capabilities.add(capability);
-                        testResult.setTestCapabilities(capabilities);
+                        CustodianResult.setTestCapabilities(capabilities);
                     }
 
                 } catch (URISyntaxException u) {
                     LOGGER.error("URI Syntax Invalid");
                 }
-                testResultsToSave.add(testResult);
+                CustodianResultsToSave.add(CustodianResult);
             }
 
             // Saving back to MongoDB
-            testResultRepository.save(testResultsToSave);
+            CustodianResultRepository.save(CustodianResultsToSave);
         }
     }
 
@@ -419,8 +419,8 @@ public class TestExecutionClientImpl implements TestExecutionClient {
         try {
             List<Feature> response = featureRepository
                     .findTopByCollectorIdAndChangeDateGreaterThanOrderByChangeDateDesc(
-                            testResultCollectorRepository.findByName(FeatureCollectorConstants.JIRA_XRAY).getId(),
-                            testResultSettings.getDeltaStartDate());
+                            CustodianResultCollectorRepository.findByName(FeatureCollectorConstants.JIRA_XRAY).getId(),
+                            CustodianResultSettings.getDeltaStartDate());
             if ((response != null) && !response.isEmpty()) {
                 data = response.get(0).getChangeDate();
             }
@@ -433,8 +433,8 @@ public class TestExecutionClientImpl implements TestExecutionClient {
     }
 
     private CollectorItem createCollectorItem(Feature testExec) {
-        List<TestResultCollector> collector = testResultCollectorRepository.findByCollectorTypeAndName(CollectorType.Test, "Jira XRay");
-        TestResultCollector collector1 = collector.get(0);
+        List<CustodianResultCollector> collector = CustodianResultCollectorRepository.findByCollectorTypeAndName(CollectorType.Test, "Jira XRay");
+        CustodianResultCollector collector1 = collector.get(0);
         CollectorItem existing = collectorItemRepository.findByCollectorIdNiceNameAndJobName(collector1.getId(), "Manual", testExec.getsName());
         CollectorItem tempCollItem = new CollectorItem();
         Optional<CollectorItem> optionalCollectorItem = Optional.ofNullable(existing);

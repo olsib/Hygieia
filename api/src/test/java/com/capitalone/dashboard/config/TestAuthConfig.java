@@ -39,7 +39,7 @@ import com.capitalone.dashboard.service.ScopeService;
 import com.capitalone.dashboard.service.ServiceService;
 import com.capitalone.dashboard.service.TeamService;
 import com.capitalone.dashboard.service.TemplateService;
-import com.capitalone.dashboard.service.TestResultService;
+import com.capitalone.dashboard.service.CustodianResultService;
 import com.capitalone.dashboard.service.UserInfoService;
 import com.capitalone.dashboard.service.UserInfoServiceImpl;
 
@@ -136,8 +136,8 @@ public class TestAuthConfig {
     }
 
     @Bean
-    public TestResultService testResultService() {
-        return Mockito.mock(TestResultService.class);
+    public CustodianResultService CustodianResultService() {
+        return Mockito.mock(CustodianResultService.class);
     }
 
     @Bean

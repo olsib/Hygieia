@@ -5,12 +5,12 @@ import com.capitalone.dashboard.model.CollectorItem;
 import com.capitalone.dashboard.model.CollectorType;
 import com.capitalone.dashboard.model.JenkinsCucumberTestCollector;
 import com.capitalone.dashboard.model.JenkinsJob;
-import com.capitalone.dashboard.model.TestResult;
+import com.capitalone.dashboard.model.CustodianResult;
 import com.capitalone.dashboard.repository.BaseCollectorRepository;
 import com.capitalone.dashboard.repository.ComponentRepository;
 import com.capitalone.dashboard.repository.JenkinsCucumberTestCollectorRepository;
 import com.capitalone.dashboard.repository.JenkinsCucumberTestJobRepository;
-import com.capitalone.dashboard.repository.TestResultRepository;
+import com.capitalone.dashboard.repository.CustodianResultRepository;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.TaskScheduler;
@@ -30,7 +30,7 @@ public class JenkinsCucumberTestCollectorTask extends
 
     private final JenkinsCucumberTestCollectorRepository jenkinsCucumberTestCollectorRepository;
     private final JenkinsCucumberTestJobRepository jenkinsCucumberTestJobRepository;
-    private final TestResultRepository testResultRepository;
+    private final CustodianResultRepository CustodianResultRepository;
     private final JenkinsClient jenkinsClient;
     private final JenkinsSettings jenkinsCucumberTestSettings;
     private final ComponentRepository dbComponentRepository;
@@ -40,14 +40,14 @@ public class JenkinsCucumberTestCollectorTask extends
             TaskScheduler taskScheduler,
             JenkinsCucumberTestCollectorRepository jenkinsCucumberTestCollectorRepository,
             JenkinsCucumberTestJobRepository jenkinsCucumberTestJobRepository,
-            TestResultRepository testResultRepository,
+            CustodianResultRepository CustodianResultRepository,
             JenkinsClient jenkinsCucumberTestClient,
             JenkinsSettings jenkinsCucumberTestSettings,
             ComponentRepository dbComponentRepository) {
         super(taskScheduler, "JenkinsCucumberTest");
         this.jenkinsCucumberTestCollectorRepository = jenkinsCucumberTestCollectorRepository;
         this.jenkinsCucumberTestJobRepository = jenkinsCucumberTestJobRepository;
-        this.testResultRepository = testResultRepository;
+        this.CustodianResultRepository = CustodianResultRepository;
         this.jenkinsClient = jenkinsCucumberTestClient;
         this.jenkinsCucumberTestSettings = jenkinsCucumberTestSettings;
         this.dbComponentRepository = dbComponentRepository;
@@ -196,12 +196,12 @@ public class JenkinsCucumberTestCollectorTask extends
                 job.setLastUpdated(System.currentTimeMillis());
                 jenkinsCucumberTestJobRepository.save(job);
                 // Obtain the Test Result
-                TestResult result = jenkinsClient
-                        .getCucumberTestResult(job.getJobUrl());
+                CustodianResult result = jenkinsClient
+                        .getCucumberCustodianResult(job.getJobUrl());
                 if (result != null) {
                     result.setCollectorItemId(job.getId());
                     result.setTimestamp(System.currentTimeMillis());
-                    testResultRepository.save(result);
+                    CustodianResultRepository.save(result);
                     count++;
                 }
             }
@@ -216,7 +216,7 @@ public class JenkinsCucumberTestCollectorTask extends
     }
 
     private boolean isNewCucumberResult(JenkinsJob job, Build build) {
-        return testResultRepository.findByCollectorItemIdAndExecutionId(
+        return CustodianResultRepository.findByCollectorItemIdAndExecutionId(
                 job.getId(), build.getNumber()) == null;
     }
 

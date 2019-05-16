@@ -14,8 +14,8 @@ import java.util.Iterator;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
 
-public class CucumberJsonToTestResultTransformerTest {
-    CucumberJsonToTestResultTransformer transformer = new CucumberJsonToTestResultTransformer();
+public class CucumberJsonToCustodianResultTransformerTest {
+    CucumberJsonToCustodianResultTransformer transformer = new CucumberJsonToCustodianResultTransformer();
 
     @Test
     public void testTransform() throws Exception {
@@ -97,7 +97,7 @@ public class CucumberJsonToTestResultTransformerTest {
     }
 
     private String getJson(String fileName) throws IOException {
-        InputStream inputStream = CucumberJsonToTestResultTransformerTest.class.getResourceAsStream(fileName);
+        InputStream inputStream = CucumberJsonToCustodianResultTransformerTest.class.getResourceAsStream(fileName);
         return IOUtils.toString(inputStream);
     }
 }

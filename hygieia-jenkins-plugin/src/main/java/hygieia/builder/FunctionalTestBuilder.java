@@ -1,7 +1,7 @@
 package hygieia.builder;
 
 import com.capitalone.dashboard.model.BuildStatus;
-import com.capitalone.dashboard.model.TestResult;
+import com.capitalone.dashboard.model.CustodianResult;
 import com.capitalone.dashboard.model.quality.QualityVisitee;
 import com.capitalone.dashboard.request.BuildDataCreateRequest;
 import com.capitalone.dashboard.request.TestDataCreateRequest;
@@ -11,7 +11,7 @@ import hudson.EnvVars;
 import hudson.FilePath;
 import hudson.model.Run;
 import hudson.model.TaskListener;
-import hygieia.transformer.TestResultVisitor;
+import hygieia.transformer.CustodianResultVisitor;
 import hygieia.utils.HygieiaUtils;
 
 import java.io.IOException;
@@ -29,7 +29,7 @@ public class FunctionalTestBuilder {
         this.objectMapper = objectMapper;
     }
 
-    private TestResult buildTestResults(Run run, TaskListener listener, String filePattern, FilePath filePath, String directory, BuildDataCreateRequest buildDataCreateRequest, String testType) {
+    private CustodianResult buildCustodianResults(Run run, TaskListener listener, String filePattern, FilePath filePath, String directory, BuildDataCreateRequest buildDataCreateRequest, String testType) {
         List<FilePath> testFiles = null;
         try {
             EnvVars envVars = run.getEnvironment(listener);
@@ -49,9 +49,9 @@ public class FunctionalTestBuilder {
         return getCapabilities(testFiles, listener, String.valueOf(buildDataCreateRequest.getNumber()), buildDataCreateRequest, testType);
     }
 
-    private TestResult getCapabilities(List<FilePath> testFiles, TaskListener listener, String executionId, BuildDataCreateRequest buildDataCreateRequest, String testType) {
+    private CustodianResult getCapabilities(List<FilePath> testFiles, TaskListener listener, String executionId, BuildDataCreateRequest buildDataCreateRequest, String testType) {
 
-        TestResultVisitor cucumberTransformer = new TestResultVisitor(testType, buildDataCreateRequest);
+        CustodianResultVisitor cucumberTransformer = new CustodianResultVisitor(testType, buildDataCreateRequest);
         for (FilePath file : testFiles) {
             try {
                 listener.getLogger().println("Hygieia Test Publisher: Processing file: " + file.getRemote());
@@ -89,9 +89,9 @@ public class FunctionalTestBuilder {
         BuildDataCreateRequest buildDataCreateRequest = new BuildBuilder()
                 .createBuildRequestFromRun(run, jenkinsName, listener, buildStatus, false);
 
-        TestResult testResult = buildTestResults(run, listener, filePattern, filePath, directory, buildDataCreateRequest, testType);
+        CustodianResult CustodianResult = buildCustodianResults(run, listener, filePattern, filePath, directory, buildDataCreateRequest, testType);
 
-        if (testResult != null) {
+        if (CustodianResult != null) {
             TestDataCreateRequest request = new TestDataCreateRequest();
             EnvVars env = null;
             try {
@@ -107,24 +107,24 @@ public class FunctionalTestBuilder {
                 request.setServerUrl(buildDataCreateRequest.getJobUrl().substring(0, ind));
             }
             request.setTestJobId(buildId);
-            request.setType(testResult.getType());
+            request.setType(CustodianResult.getType());
             request.setTestJobName(buildDataCreateRequest.getJobName());
             request.setTestJobUrl(buildDataCreateRequest.getJobUrl());
-            request.setTimestamp(testResult.getTimestamp());
+            request.setTimestamp(CustodianResult.getTimestamp());
             request.setNiceName(jenkinsName);
 
-            request.setDescription(testResult.getDescription());
-            request.setDuration(testResult.getDuration());
-            request.setEndTime(testResult.getEndTime());
-            request.setExecutionId(testResult.getExecutionId());
-            request.setFailureCount(testResult.getFailureCount());
-            request.setSkippedCount(testResult.getSkippedCount());
-            request.setStartTime(testResult.getStartTime());
-            request.setSuccessCount(testResult.getSuccessCount());
+            request.setDescription(CustodianResult.getDescription());
+            request.setDuration(CustodianResult.getDuration());
+            request.setEndTime(CustodianResult.getEndTime());
+            request.setExecutionId(CustodianResult.getExecutionId());
+            request.setFailureCount(CustodianResult.getFailureCount());
+            request.setSkippedCount(CustodianResult.getSkippedCount());
+            request.setStartTime(CustodianResult.getStartTime());
+            request.setSuccessCount(CustodianResult.getSuccessCount());
 
-            request.setTotalCount(testResult.getTotalCount());
-            request.setUnknownStatusCount(testResult.getUnknownStatusCount());
-            request.getTestCapabilities().addAll(testResult.getTestCapabilities());
+            request.setTotalCount(CustodianResult.getTotalCount());
+            request.setUnknownStatusCount(CustodianResult.getUnknownStatusCount());
+            request.getTestCapabilities().addAll(CustodianResult.getTestCapabilities());
 
             request.setTargetAppName(applicationName);
             request.setTargetEnvName(environmentName);

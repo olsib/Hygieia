@@ -74,7 +74,7 @@ public class AuditCollectorTaskTest {
 
 
     @Test
-    public void test_testResultAuditCollect() throws IOException, ParseException {
+    public void test_CustodianResultAuditCollect() throws IOException, ParseException {
         ResponseEntity<String> response = new ResponseEntity<>(getJSONResponse("response/auditresponse.json"),
                 HttpStatus.OK);
         JSONParser jsonParser = new JSONParser();
@@ -86,7 +86,7 @@ public class AuditCollectorTaskTest {
         Assert.assertEquals(testAudit.getDataStatus(), DataStatus.OK);
         Assert.assertEquals(testAudit.getType(), AuditType.TEST_RESULT);
         Assert.assertTrue(Optional.ofNullable(testAudit.getOptions().get("traceability")).isPresent());
-        Assert.assertTrue(Optional.ofNullable(testAudit.getOptions().get("featureTestResult")).isPresent());
+        Assert.assertTrue(Optional.ofNullable(testAudit.getOptions().get("featureCustodianResult")).isPresent());
     }
 
     @Test

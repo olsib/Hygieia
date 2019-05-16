@@ -2,18 +2,18 @@ package com.capitalone.dashboard.response;
 
 import com.capitalone.dashboard.model.TestCapability;
 import com.capitalone.dashboard.model.Traceability;
-import com.capitalone.dashboard.status.TestResultAuditStatus;
+import com.capitalone.dashboard.status.CustodianResultAuditStatus;
 
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-public class TestResultsAuditResponse extends AuditReviewResponse<TestResultAuditStatus> {
+public class CustodianResultsAuditResponse extends AuditReviewResponse<CustodianResultAuditStatus> {
     private String url;
     private long lastExecutionTime;
     private Collection<TestCapability> testCapabilities;
     private String type;
-    private Map featureTestResult = new HashMap();
+    private Map featureCustodianResult = new HashMap();
     public Traceability traceability;
 
     public Collection<TestCapability> getTestCapabilities() { return testCapabilities; }
@@ -40,9 +40,9 @@ public class TestResultsAuditResponse extends AuditReviewResponse<TestResultAudi
 
     public void setType(String type) { this.type = type; }
 
-    public Map getFeatureTestResult() { return featureTestResult; }
+    public Map getFeatureCustodianResult() { return featureCustodianResult; }
 
-    public void setFeatureTestResult(Map featureTestResult) { this.featureTestResult = featureTestResult; }
+    public void setFeatureCustodianResult(Map featureCustodianResult) { this.featureCustodianResult = featureCustodianResult; }
 
     public Traceability getTraceability() { return traceability; }
 

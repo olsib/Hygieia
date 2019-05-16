@@ -109,10 +109,10 @@ public class ActiveJobNotifier implements FineGrainedNotifier {
 //                FunctionalTestBuilder(Run run, TaskListener listener, BuildStatus buildStatus, FilePath filePath, String applicationName, String environmentName, String testType, String filePattern, String directory, String jenkinsName, String buildId)
                 BuildStatus buildStatus = BuildStatus.fromString(r.getResult().toString());
                 TestDataCreateRequest request = new FunctionalTestBuilder(objectMapper).getTestDataCreateRequest(r, listener, buildStatus, r.getWorkspace(), publisher.getHygieiaTest().getTestApplicationName(),
-                        publisher.getHygieiaTest().getTestEnvironmentName(), publisher.getHygieiaTest().getTestType(), publisher.getHygieiaTest().getTestFileNamePattern(), publisher.getHygieiaTest().getTestResultsDirectory(),
+                        publisher.getHygieiaTest().getTestEnvironmentName(), publisher.getHygieiaTest().getTestType(), publisher.getHygieiaTest().getTestFileNamePattern(), publisher.getHygieiaTest().getCustodianResultsDirectory(),
                         publisher.getDescriptor().getHygieiaJenkinsName(), HygieiaUtils.getBuildCollectionId(buildResponse.getResponseValue()));
                 if (request != null) {
-                    HygieiaResponse testResponse = getHygieiaService(r).publishTestResults(request);
+                    HygieiaResponse testResponse = getHygieiaService(r).publishCustodianResults(request);
                     if (testResponse.getResponseCode() == HttpStatus.SC_CREATED) {
                         listener.getLogger().println("Hygieia: Published Test Data. " + testResponse.toString());
                     } else {

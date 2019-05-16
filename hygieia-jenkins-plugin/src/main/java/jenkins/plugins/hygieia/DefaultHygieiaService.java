@@ -113,7 +113,7 @@ public class DefaultHygieiaService implements HygieiaService {
     }
 
     @Override
-    public HygieiaResponse publishTestResults(TestDataCreateRequest request) {
+    public HygieiaResponse publishCustodianResults(TestDataCreateRequest request) {
         String responseValue;
         int responseCode = HttpStatus.SC_NO_CONTENT;
         try {

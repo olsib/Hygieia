@@ -7,7 +7,7 @@
     <url>https://github.com/capitalone/Hygieia</url>
     <packaging>jar</packaging>
 
-    <artifactId>jira-xray-testresult-collector</artifactId>
+    <artifactId>jira-xray-CustodianResult-collector</artifactId>
 
     <parent>
         <groupId>com.capitalone.dashboard</groupId>
@@ -50,7 +50,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>1.8</java.version>
         <junit.version>4.11</junit.version>
-        <final.name>jira-xray-testresult-collector</final.name>
+        <final.name>jira-xray-CustodianResult-collector</final.name>
         <httpasyncclient.version>4.0-beta3-atlassian-1</httpasyncclient.version>
         <httpclient.version>4.2.1-atlassian-2</httpclient.version>
     </properties>
@@ -67,7 +67,7 @@
                 <artifactId>docker-maven-plugin</artifactId>
                 <configuration>
                     <skipDockerBuild>false</skipDockerBuild>
-                    <imageName>hygieia-jira-xray-testresult-collector</imageName>
+                    <imageName>hygieia-jira-xray-CustodianResult-collector</imageName>
                     <dockerDirectory>${project.basedir}/docker</dockerDirectory>
                     <resources>
                         <resource>

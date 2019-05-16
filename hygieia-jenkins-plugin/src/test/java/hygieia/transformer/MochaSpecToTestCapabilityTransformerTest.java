@@ -35,7 +35,7 @@ public class MochaSpecToTestCapabilityTransformerTest {
     }
 
     @Test
-    public void producesCucumberTestResult() throws Exception {
+    public void producesCucumberCustodianResult() throws Exception {
 
         when(mockBuildDataRequest.getNumber()).thenReturn("aBuildNumber");
 

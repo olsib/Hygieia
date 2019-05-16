@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Transforms a Cucumber result JSON string into a TestResult
+ * Transforms a Cucumber result JSON string into a CustodianResult
  */
 
 public class CucumberJsonToTestCapabilityTransformer {

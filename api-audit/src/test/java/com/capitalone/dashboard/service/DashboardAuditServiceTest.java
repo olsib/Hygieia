@@ -24,7 +24,7 @@ import com.capitalone.dashboard.repository.ComponentRepository;
 import com.capitalone.dashboard.repository.DashboardRepository;
 import com.capitalone.dashboard.repository.GitRequestRepository;
 import com.capitalone.dashboard.repository.LibraryPolicyResultsRepository;
-import com.capitalone.dashboard.repository.TestResultRepository;
+import com.capitalone.dashboard.repository.CustodianResultRepository;
 import com.capitalone.dashboard.repository.FeatureRepository;
 import com.capitalone.dashboard.response.ArtifactAuditResponse;
 import com.capitalone.dashboard.response.AuditReviewResponse;
@@ -34,7 +34,7 @@ import com.capitalone.dashboard.response.LibraryPolicyAuditResponse;
 import com.capitalone.dashboard.response.SecurityReviewAuditResponse;
 import com.capitalone.dashboard.response.PerformanceTestAuditResponse;
 import com.capitalone.dashboard.response.CodeQualityAuditResponse;
-import com.capitalone.dashboard.response.TestResultsAuditResponse;
+import com.capitalone.dashboard.response.CustodianResultsAuditResponse;
 import com.capitalone.dashboard.testutil.GsonUtil;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -105,7 +105,7 @@ public class DashboardAuditServiceTest {
     private LibraryPolicyResultsRepository libraryPolicyResultsRepository;
 
     @Autowired
-    private TestResultRepository testResultsRepository;
+    private CustodianResultRepository CustodianResultsRepository;
 
     @Autowired
     private FeatureRepository featureRepository;
@@ -126,7 +126,7 @@ public class DashboardAuditServiceTest {
         TestUtils.loadCollector(collectorRepository);
         TestUtils.loadPullRequests(gitRequestRepository);
         TestUtils.loadSSCRequests(codeQualityRepository);
-        TestUtils.loadTestResults(testResultsRepository);
+        TestUtils.loadCustodianResults(CustodianResultsRepository);
         TestUtils.loadCodeQuality(codeQualityRepository);
         TestUtils.loadFeature(featureRepository);
         TestUtils.loadArtifacts(binaryArtifactRepository);
@@ -289,21 +289,21 @@ public class DashboardAuditServiceTest {
 
 
     @Test
-    public void runTestResultsAuditTests() throws AuditException, IOException {
+    public void runCustodianResultsAuditTests() throws AuditException, IOException {
         DashboardReviewResponse actual = getActualReviewResponse(dashboardAuditService.getDashboardReviewResponse("TestSSA",
                 DashboardType.Team,
                 "TestBusServ",
                 "confItem",
                 1473885606000L, 1478983206000L,
-                Sets.newHashSet(AuditType.TEST_RESULT)), TestResultsAuditResponse.class);
-        DashboardReviewResponse expected = getExpectedReviewResponse("TestResults.json", TestResultsAuditResponse.class);
+                Sets.newHashSet(AuditType.TEST_RESULT)), CustodianResultsAuditResponse.class);
+        DashboardReviewResponse expected = getExpectedReviewResponse("CustodianResults.json", CustodianResultsAuditResponse.class);
         assertDashboardAudit(actual, expected);
         assertThat(actual.getReview()).isNotEmpty();
         assertThat(actual.getReview().get(AuditType.TEST_RESULT)).isNotNull();
-        Map<AuditType, Collection<TestResultsAuditResponse>> actualReviewMap = actual.getReview();
-        Collection<TestResultsAuditResponse> actualReview = actualReviewMap.get(AuditType.TEST_RESULT);
-        Map<AuditType, Collection<TestResultsAuditResponse>> expectedReviewMap = expected.getReview();
-        Collection<TestResultsAuditResponse> expectedReview = expectedReviewMap.get(AuditType.TEST_RESULT);
+        Map<AuditType, Collection<CustodianResultsAuditResponse>> actualReviewMap = actual.getReview();
+        Collection<CustodianResultsAuditResponse> actualReview = actualReviewMap.get(AuditType.TEST_RESULT);
+        Map<AuditType, Collection<CustodianResultsAuditResponse>> expectedReviewMap = expected.getReview();
+        Collection<CustodianResultsAuditResponse> expectedReview = expectedReviewMap.get(AuditType.TEST_RESULT);
         assertThat(actualReview.size()).isEqualTo(1);
         //assertThat((actualReview.toArray()[0])).isEqualToComparingFieldByField(expectedReview.toArray()[0]);
     }

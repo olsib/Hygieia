@@ -94,7 +94,7 @@ public class HygieiaPublisherTest extends TestCase {
             return responseBoolean;
         }
 
-        public HygieiaResponse publishTestResults(TestDataCreateRequest request) {
+        public HygieiaResponse publishCustodianResults(TestDataCreateRequest request) {
             return hygieiaResponse;
         }
 

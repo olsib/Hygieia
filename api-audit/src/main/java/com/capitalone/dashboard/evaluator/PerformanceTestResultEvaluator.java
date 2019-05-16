@@ -9,12 +9,12 @@ import com.capitalone.dashboard.model.PerfTest;
 import com.capitalone.dashboard.model.TestCapability;
 import com.capitalone.dashboard.model.TestCase;
 import com.capitalone.dashboard.model.TestCaseStep;
-import com.capitalone.dashboard.model.TestResult;
+import com.capitalone.dashboard.model.CustodianResult;
 import com.capitalone.dashboard.model.TestSuite;
 import com.capitalone.dashboard.model.TestSuiteType;
-import com.capitalone.dashboard.repository.TestResultRepository;
+import com.capitalone.dashboard.repository.CustodianResultRepository;
 import com.capitalone.dashboard.response.PerformanceTestAuditResponse;
-import com.capitalone.dashboard.response.TestResultsAuditResponse;
+import com.capitalone.dashboard.response.CustodianResultsAuditResponse;
 import com.capitalone.dashboard.status.PerformanceTestAuditStatus;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -31,21 +31,21 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Component
-public class PerformanceTestResultEvaluator extends Evaluator<PerformanceTestAuditResponse> {
+public class PerformanceCustodianResultEvaluator extends Evaluator<PerformanceTestAuditResponse> {
 
-    private final TestResultRepository testResultRepository;
+    private final CustodianResultRepository CustodianResultRepository;
 
 
     @Autowired
-    public PerformanceTestResultEvaluator(TestResultRepository testResultRepository) {
+    public PerformanceCustodianResultEvaluator(CustodianResultRepository CustodianResultRepository) {
 
-        this.testResultRepository = testResultRepository;
+        this.CustodianResultRepository = CustodianResultRepository;
     }
 
     @Override
     public Collection<PerformanceTestAuditResponse> evaluate(Dashboard dashboard, long beginDate, long endDate, Map<?, ?> dummy) throws AuditException {
         List<CollectorItem> testItems = getCollectorItems(dashboard, "codeanalysis", CollectorType.Test);
-        Collection<TestResultsAuditResponse> responses = new ArrayList<>();
+        Collection<CustodianResultsAuditResponse> responses = new ArrayList<>();
         if (CollectionUtils.isEmpty(testItems)) {
             throw new AuditException("No tests configured", AuditException.NO_COLLECTOR_ITEM_CONFIGURED);
         }
@@ -65,14 +65,14 @@ public class PerformanceTestResultEvaluator extends Evaluator<PerformanceTestAud
             perfReviewResponse.addAuditStatus(PerformanceTestAuditStatus.COLLECTOR_ITEM_ERROR);
             return perfReviewResponse;
         }
-        List<TestResult> testResults = testResultRepository.findByCollectorItemIdAndTimestampIsBetweenOrderByTimestampDesc(perfItem.getId(), beginDate-1, endDate+1);
+        List<CustodianResult> CustodianResults = CustodianResultRepository.findByCollectorItemIdAndTimestampIsBetweenOrderByTimestampDesc(perfItem.getId(), beginDate-1, endDate+1);
         List<PerfTest> testlist = new ArrayList<>();
 
-        if (!CollectionUtils.isEmpty(testResults)){
-            testResults.sort(Comparator.comparing(TestResult::getTimestamp).reversed());
-            TestResult testResult = testResults.iterator().next();
-            if (TestSuiteType.Performance.toString().equalsIgnoreCase(testResult.getType().name())) {
-                Collection<TestCapability> testCapabilities = testResult.getTestCapabilities();
+        if (!CollectionUtils.isEmpty(CustodianResults)){
+            CustodianResults.sort(Comparator.comparing(CustodianResult::getTimestamp).reversed());
+            CustodianResult CustodianResult = CustodianResults.iterator().next();
+            if (TestSuiteType.Performance.toString().equalsIgnoreCase(CustodianResult.getType().name())) {
+                Collection<TestCapability> testCapabilities = CustodianResult.getTestCapabilities();
 
                 if(!CollectionUtils.isEmpty(testCapabilities)){
                     Comparator<TestCapability> testCapabilityComparator = Comparator.comparing(TestCapability::getTimestamp);
@@ -116,17 +116,17 @@ public class PerformanceTestResultEvaluator extends Evaluator<PerformanceTestAud
                             }
 
                         }
-                        if(StringUtils.equalsIgnoreCase(testResult.getDescription(),"Success")){
+                        if(StringUtils.equalsIgnoreCase(CustodianResult.getDescription(),"Success")){
                             perfReviewResponse.addAuditStatus(PerformanceTestAuditStatus.PERFORMANCE_MET);
 
                         }
-                        test.setRunId(testResult.getExecutionId());
-                        test.setStartTime(testResult.getStartTime());
-                        test.setEndTime(testResult.getEndTime());
-                        test.setResultStatus(testResult.getResultStatus());
+                        test.setRunId(CustodianResult.getExecutionId());
+                        test.setStartTime(CustodianResult.getStartTime());
+                        test.setEndTime(CustodianResult.getEndTime());
+                        test.setResultStatus(CustodianResult.getResultStatus());
                         test.setPerfIndicators(kpilist);
                         test.setTestName(testSuite.getDescription());
-                        test.setTimeStamp(testResult.getTimestamp());
+                        test.setTimeStamp(CustodianResult.getTimestamp());
                         testlist.add(test);
                     }
                 }

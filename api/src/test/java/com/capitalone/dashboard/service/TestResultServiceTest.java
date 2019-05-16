@@ -6,7 +6,7 @@ import com.capitalone.dashboard.model.CollectorItem;
 import com.capitalone.dashboard.model.TestCapability;
 import com.capitalone.dashboard.model.TestCase;
 import com.capitalone.dashboard.model.TestCaseStatus;
-import com.capitalone.dashboard.model.TestResult;
+import com.capitalone.dashboard.model.CustodianResult;
 import com.capitalone.dashboard.model.TestSuite;
 import com.capitalone.dashboard.model.TestSuiteType;
 import com.capitalone.dashboard.model.DataResponse;
@@ -14,9 +14,9 @@ import com.capitalone.dashboard.model.Component;
 import com.capitalone.dashboard.model.CollectorType;
 import com.capitalone.dashboard.repository.CollectorRepository;
 import com.capitalone.dashboard.repository.ComponentRepository;
-import com.capitalone.dashboard.repository.TestResultRepository;
+import com.capitalone.dashboard.repository.CustodianResultRepository;
 import com.capitalone.dashboard.request.TestDataCreateRequest;
-import com.capitalone.dashboard.request.TestResultRequest;
+import com.capitalone.dashboard.request.CustodianResultRequest;
 import org.bson.types.ObjectId;
 import org.junit.Assert;
 import org.junit.Test;
@@ -33,13 +33,13 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class TestResultServiceTest {
+public class CustodianResultServiceTest {
 
-    @Mock private TestResultRepository testResultRepository;
+    @Mock private CustodianResultRepository CustodianResultRepository;
     @Mock private CollectorRepository collectorRepository;
     @Mock private CollectorService collectorService;
     @Mock private ComponentRepository componentRepository;
-    @InjectMocks private TestResultServiceImpl testResultService;
+    @InjectMocks private CustodianResultServiceImpl CustodianResultService;
 
 
     @Test
@@ -52,11 +52,11 @@ public class TestResultServiceTest {
         when(collectorService.createCollector(any(Collector.class))).thenReturn(new Collector());
         when(collectorService.createCollectorItem(any(CollectorItem.class))).thenReturn(new CollectorItem());
 
-        TestResult testResult = makeTestResult();
+        CustodianResult CustodianResult = makeCustodianResult();
 
-        when(testResultRepository.save(any(TestResult.class))).thenReturn(testResult);
-        String response = testResultService.create(request);
-        String expected = testResult.getId().toString();
+        when(CustodianResultRepository.save(any(CustodianResult.class))).thenReturn(CustodianResult);
+        String response = CustodianResultService.create(request);
+        String expected = CustodianResult.getId().toString();
         assertEquals(response, expected);
     }
 
@@ -70,11 +70,11 @@ public class TestResultServiceTest {
         when(collectorService.createCollector(any(Collector.class))).thenReturn(new Collector());
         when(collectorService.createCollectorItem(any(CollectorItem.class))).thenReturn(new CollectorItem());
 
-        TestResult testResult = makeTestResult();
+        CustodianResult CustodianResult = makeCustodianResult();
 
-        when(testResultRepository.save(any(TestResult.class))).thenReturn(testResult);
-        String response = testResultService.createV2(request);
-        String expected = testResult.getId().toString() + "," + testResult.getCollectorItemId();
+        when(CustodianResultRepository.save(any(CustodianResult.class))).thenReturn(CustodianResult);
+        String response = CustodianResultService.createV2(request);
+        String expected = CustodianResult.getId().toString() + "," + CustodianResult.getCollectorItemId();
         assertEquals(response, expected);
     }
 
@@ -83,28 +83,28 @@ public class TestResultServiceTest {
         ObjectId collectorItemId = ObjectId.get();
         ObjectId collectorId = ObjectId.get();
 
-        TestResultRequest request = new TestResultRequest();
+        CustodianResultRequest request = new CustodianResultRequest();
 
         when(componentRepository.findOne(request.getComponentId())).thenReturn(makeComponent(collectorItemId, collectorId, false));
         when(collectorRepository.findOne(collectorId)).thenReturn(new Collector());
 
-        DataResponse<Iterable<TestResult>> response = testResultService.search(request);
+        DataResponse<Iterable<CustodianResult>> response = CustodianResultService.search(request);
 
-        List<TestResult> result = (List<TestResult>) response.getResult();
+        List<CustodianResult> result = (List<CustodianResult>) response.getResult();
         Assert.assertNull(result);
     }
 
     @Test
     public void search_Empty_Response_No_Component() {
         ObjectId collectorId = ObjectId.get();
-        TestResultRequest request = new TestResultRequest();
+        CustodianResultRequest request = new CustodianResultRequest();
 
         when(componentRepository.findOne(request.getComponentId())).thenReturn(null);
         when(collectorRepository.findOne(collectorId)).thenReturn(new Collector());
 
-        DataResponse<Iterable<TestResult>> response = testResultService.search(request);
+        DataResponse<Iterable<CustodianResult>> response = CustodianResultService.search(request);
 
-        List<TestResult> result = (List<TestResult>) response.getResult();
+        List<CustodianResult> result = (List<CustodianResult>) response.getResult();
         Assert.assertNull(result);
     }
 
@@ -169,8 +169,8 @@ public class TestResultServiceTest {
     }
 
 
-    private TestResult makeTestResult() {
-        TestResult result = new TestResult();
+    private CustodianResult makeCustodianResult() {
+        CustodianResult result = new CustodianResult();
         result.setId(ObjectId.get());
         result.setCollectorItemId(ObjectId.get());
         result.setDescription("description");

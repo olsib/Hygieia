@@ -132,7 +132,7 @@
         "tags": []
       }],
       "type": "Functional",
-      "featureTestResult": {
+      "featureCustodianResult": {
         "successCount": 0,
         "skippedCount": 0,
         "totalCount": 1,

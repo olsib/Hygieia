@@ -9,10 +9,10 @@ import com.capitalone.dashboard.model.Component;
 import com.capitalone.dashboard.model.Dashboard;
 import com.capitalone.dashboard.model.GitRequest;
 import com.capitalone.dashboard.model.LibraryPolicyResult;
-import com.capitalone.dashboard.model.TestResult;
+import com.capitalone.dashboard.model.CustodianResult;
 import com.capitalone.dashboard.model.Feature;
 import com.capitalone.dashboard.repository.BinaryArtifactRepository;
-import com.capitalone.dashboard.repository.TestResultRepository;
+import com.capitalone.dashboard.repository.CustodianResultRepository;
 import com.capitalone.dashboard.repository.FeatureRepository;
 import com.capitalone.dashboard.repository.CodeQualityRepository;
 import com.capitalone.dashboard.repository.CollectorItemRepository;
@@ -22,7 +22,7 @@ import com.capitalone.dashboard.repository.ComponentRepository;
 import com.capitalone.dashboard.repository.DashboardRepository;
 import com.capitalone.dashboard.repository.GitRequestRepository;
 import com.capitalone.dashboard.repository.LibraryPolicyResultsRepository;
-import com.capitalone.dashboard.repository.TestResultRepository;
+import com.capitalone.dashboard.repository.CustodianResultRepository;
 import com.capitalone.dashboard.testutil.GsonUtil;
 import com.google.common.io.Resources;
 import com.google.gson.Gson;
@@ -91,11 +91,11 @@ public class TestUtils {
         List<LibraryPolicyResult> ssa = gson.fromJson(json, new TypeToken<List<LibraryPolicyResult>>() {}.getType());
         libraryPolicyResultsRepository.save(ssa);
     }
-    public static void loadTestResults(TestResultRepository testResultRepository) throws IOException {
+    public static void loadCustodianResults(CustodianResultRepository CustodianResultRepository) throws IOException {
         Gson gson = GsonUtil.getGson();
         String json = IOUtils.toString(Resources.getResource("./test_results/test_results.json"));
-        List<TestResult> testResults = gson.fromJson(json, new TypeToken<List<TestResult>>(){}.getType());
-        testResultRepository.save(testResults);
+        List<CustodianResult> CustodianResults = gson.fromJson(json, new TypeToken<List<CustodianResult>>(){}.getType());
+        CustodianResultRepository.save(CustodianResults);
     }
 
     public static void loadCodeQuality(CodeQualityRepository codeQualityRepository) throws IOException {

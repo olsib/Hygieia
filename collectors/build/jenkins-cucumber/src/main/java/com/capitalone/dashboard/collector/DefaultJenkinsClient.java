@@ -5,7 +5,7 @@ import com.capitalone.dashboard.model.Build;
 import com.capitalone.dashboard.model.JenkinsJob;
 import com.capitalone.dashboard.model.TestCapability;
 import com.capitalone.dashboard.model.TestCaseStatus;
-import com.capitalone.dashboard.model.TestResult;
+import com.capitalone.dashboard.model.CustodianResult;
 import com.capitalone.dashboard.model.TestSuite;
 import com.capitalone.dashboard.model.TestSuiteType;
 import com.capitalone.dashboard.util.Supplier;
@@ -38,7 +38,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 
-//@SuppressWarnings("PMD.ExcessiveMethodLength") // getCucumberTestResult needs refactor!
+//@SuppressWarnings("PMD.ExcessiveMethodLength") // getCucumberCustodianResult needs refactor!
 @Component
 public class DefaultJenkinsClient implements JenkinsClient {
 
@@ -215,20 +215,20 @@ public class DefaultJenkinsClient implements JenkinsClient {
         return capabilities;
     }
 
-    protected TestResult buildTestResultObject(JSONObject buildJson, String buildUrl, List<TestCapability> capabilities) {
+    protected CustodianResult buildCustodianResultObject(JSONObject buildJson, String buildUrl, List<TestCapability> capabilities) {
         if (!capabilities.isEmpty()) {
-            // There are test suites so let's construct a TestResult to encapsulate these results
-            TestResult testResult = new TestResult();
-            testResult.setDescription(getString(buildJson, "fullDisplayName"));
-            testResult.setExecutionId(buildJson.get("number").toString());
-            testResult.setUrl(buildUrl);
+            // There are test suites so let's construct a CustodianResult to encapsulate these results
+            CustodianResult CustodianResult = new CustodianResult();
+            CustodianResult.setDescription(getString(buildJson, "fullDisplayName"));
+            CustodianResult.setExecutionId(buildJson.get("number").toString());
+            CustodianResult.setUrl(buildUrl);
             // Using the build times for start, end and duration is not ideal but the Cucumber JSON does not capture
             // start or end times
-            testResult.setDuration(getLong(buildJson, "duration"));
-            testResult.setEndTime(getLong(buildJson, "timestamp"));
-            testResult.setStartTime(testResult.getEndTime() - testResult.getDuration());
-            testResult.getTestCapabilities().addAll(capabilities);  //add all capabilities
-            testResult.setTotalCount(capabilities.size());
+            CustodianResult.setDuration(getLong(buildJson, "duration"));
+            CustodianResult.setEndTime(getLong(buildJson, "timestamp"));
+            CustodianResult.setStartTime(CustodianResult.getEndTime() - CustodianResult.getDuration());
+            CustodianResult.getTestCapabilities().addAll(capabilities);  //add all capabilities
+            CustodianResult.setTotalCount(capabilities.size());
             int testCapabilitySkippedCount = 0, testCapabilitySuccessCount = 0, testCapabilityFailCount = 0;
             int testCapabilityUnknownCount = 0;
             // Calculate counts based on test suites
@@ -248,22 +248,22 @@ public class DefaultJenkinsClient implements JenkinsClient {
                         break;
                 }
             }
-            testResult.setSuccessCount(testCapabilitySuccessCount);
-            testResult.setFailureCount(testCapabilityFailCount);
-            testResult.setSkippedCount(testCapabilitySkippedCount);
-            testResult.setUnknownStatusCount(testCapabilityUnknownCount);
-            return testResult;
+            CustodianResult.setSuccessCount(testCapabilitySuccessCount);
+            CustodianResult.setFailureCount(testCapabilityFailCount);
+            CustodianResult.setSkippedCount(testCapabilitySkippedCount);
+            CustodianResult.setUnknownStatusCount(testCapabilityUnknownCount);
+            return CustodianResult;
         }
         return null;
     }
 
 
     @Override
-    public TestResult getCucumberTestResult(String buildUrl) {
+    public CustodianResult getCucumberCustodianResult(String buildUrl) {
         try {
             JSONObject buildJson = (JSONObject) new JSONParser().parse(getJson(buildUrl, LAST_SUCCESSFUL_BUILD_ARTIFACT_SUFFIX));
             List<TestCapability> capabilities = getCapabilities(buildJson, buildUrl);
-            return buildTestResultObject(buildJson, buildUrl, capabilities);
+            return buildCustodianResultObject(buildJson, buildUrl, capabilities);
         } catch (ParseException e) {
             LOG.error("Parsing jobs on instance: " + buildUrl, e);
         } catch (RestClientException rce) {

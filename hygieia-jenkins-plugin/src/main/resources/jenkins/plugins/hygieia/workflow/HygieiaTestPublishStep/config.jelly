@@ -19,7 +19,7 @@
         </f:entry>
 
         <f:entry title="Results Directory" help="/plugin/hygieia-publisher/help-projectConfig-filePath.html">
-            <f:textbox name="testResultsDirectory"
+            <f:textbox name="CustodianResultsDirectory"
                        checkUrl="'descriptorByName/jenkins.plugins.hygieia.HygieiaPublisher/checkValue?value='+this.value"
             />
         </f:entry>

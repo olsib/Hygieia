@@ -15,7 +15,7 @@ import com.capitalone.dashboard.status.DashboardAuditStatus;
 import com.capitalone.dashboard.status.CodeQualityAuditStatus;
 import com.capitalone.dashboard.status.PerformanceTestAuditStatus;
 import com.capitalone.dashboard.status.LibraryPolicyAuditStatus;
-import com.capitalone.dashboard.status.TestResultAuditStatus;
+import com.capitalone.dashboard.status.CustodianResultAuditStatus;
 
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.http.client.utils.URIBuilder;
@@ -70,7 +70,7 @@ public class AuditCollectorUtil {
     private static final String STR_APITOKENSPACE = "apiToken ";
     private static final String STR_AUTHORIZATION = "Authorization";
     private static final String STR_TRACEABILITY = "traceability";
-    private static final String STR_FEATURE_TEST_RESULT = "featureTestResult";
+    private static final String STR_FEATURE_TEST_RESULT = "featureCustodianResult";
     private static final String STR_PERCENTAGE = "percentage";
     private static final String STR_MANUAL = "Manual";
     private static final String STR_AUTOMATED = "Automated";
@@ -340,10 +340,10 @@ public class AuditCollectorUtil {
         }
         audit.setOptions(getTestAuditOptions(jsonArray));
         auditStatuses = audit.getAuditStatusCodes();
-        if (auditStatuses.contains(TestResultAuditStatus.TEST_RESULT_AUDIT_FAIL.name())){
+        if (auditStatuses.contains(CustodianResultAuditStatus.TEST_RESULT_AUDIT_FAIL.name())){
             audit.setAuditStatus(AuditStatus.FAIL);
             audit.setDataStatus(DataStatus.OK);
-        } else if (auditStatuses.contains(TestResultAuditStatus.TEST_RESULT_AUDIT_OK.name())) {
+        } else if (auditStatuses.contains(CustodianResultAuditStatus.TEST_RESULT_AUDIT_OK.name())) {
             audit.setAuditStatus(AuditStatus.OK);
             audit.setDataStatus(DataStatus.OK);
         }else{
@@ -555,30 +555,30 @@ public class AuditCollectorUtil {
         traceability.put(STR_MANUAL, getAvgTracePercent(manualTestStream.get()));
         options.put(STR_TRACEABILITY, traceability);
 
-        Map<String, Map> featureTestResult = new HashMap<>();
-        Map featureAutoTestResultMap = new HashMap();
-        Map featureManualTestResultMap = new HashMap();
+        Map<String, Map> featureCustodianResult = new HashMap<>();
+        Map featureAutoCustodianResultMap = new HashMap();
+        Map featureManualCustodianResultMap = new HashMap();
 
-        featureAutoTestResultMap.put(SUCCESS_COUNT, getFeatureTestCount(SUCCESS_COUNT, automatedTestStream.get()));
-        featureAutoTestResultMap.put(FAILURE_COUNT, getFeatureTestCount(FAILURE_COUNT, automatedTestStream.get()));
-        featureAutoTestResultMap.put(SKIP_COUNT, getFeatureTestCount(SKIP_COUNT, automatedTestStream.get()));
-        featureAutoTestResultMap.put(TOTAL_COUNT, getFeatureTestCount(TOTAL_COUNT, automatedTestStream.get()));
+        featureAutoCustodianResultMap.put(SUCCESS_COUNT, getFeatureTestCount(SUCCESS_COUNT, automatedTestStream.get()));
+        featureAutoCustodianResultMap.put(FAILURE_COUNT, getFeatureTestCount(FAILURE_COUNT, automatedTestStream.get()));
+        featureAutoCustodianResultMap.put(SKIP_COUNT, getFeatureTestCount(SKIP_COUNT, automatedTestStream.get()));
+        featureAutoCustodianResultMap.put(TOTAL_COUNT, getFeatureTestCount(TOTAL_COUNT, automatedTestStream.get()));
 
-        featureManualTestResultMap.put(SUCCESS_COUNT, getFeatureTestCount(SUCCESS_COUNT, manualTestStream.get()));
-        featureManualTestResultMap.put(FAILURE_COUNT, getFeatureTestCount(FAILURE_COUNT, manualTestStream.get()));
-        featureManualTestResultMap.put(SKIP_COUNT, getFeatureTestCount(SKIP_COUNT, manualTestStream.get()));
-        featureManualTestResultMap.put(TOTAL_COUNT, getFeatureTestCount(TOTAL_COUNT, manualTestStream.get()));
+        featureManualCustodianResultMap.put(SUCCESS_COUNT, getFeatureTestCount(SUCCESS_COUNT, manualTestStream.get()));
+        featureManualCustodianResultMap.put(FAILURE_COUNT, getFeatureTestCount(FAILURE_COUNT, manualTestStream.get()));
+        featureManualCustodianResultMap.put(SKIP_COUNT, getFeatureTestCount(SKIP_COUNT, manualTestStream.get()));
+        featureManualCustodianResultMap.put(TOTAL_COUNT, getFeatureTestCount(TOTAL_COUNT, manualTestStream.get()));
 
-        featureTestResult.put(STR_AUTOMATED, featureAutoTestResultMap);
-        featureTestResult.put(STR_MANUAL, featureManualTestResultMap);
-        options.put(STR_FEATURE_TEST_RESULT, featureTestResult);
+        featureCustodianResult.put(STR_AUTOMATED, featureAutoCustodianResultMap);
+        featureCustodianResult.put(STR_MANUAL, featureManualCustodianResultMap);
+        options.put(STR_FEATURE_TEST_RESULT, featureCustodianResult);
         return options;
     }
 
     private static Integer getFeatureTestCount(String countType, Stream stream) {
         return stream
                 .map(jObj -> ((JSONObject)jObj).get(STR_FEATURE_TEST_RESULT))
-                .map(featureTestResult -> ((JSONObject)featureTestResult).get(countType))
+                .map(featureCustodianResult -> ((JSONObject)featureCustodianResult).get(countType))
                 .mapToInt(n -> Integer.valueOf(n.toString())).sum();
     }
 

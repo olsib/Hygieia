@@ -94,7 +94,7 @@
 
 
                             // get the most recent record for current metric
-                            var latestResult = rows[0];
+                            var laCustodianResult = rows[0];
 
                             // use $timeout so that it will apply on the next digest
                             $timeout(function () {
@@ -105,7 +105,7 @@
                                     },
                                     summary: {
                                         securityIssues: {
-                                            number: latestResult.major + latestResult.critical + latestResult.blocker,
+                                            number: laCustodianResult.major + laCustodianResult.critical + laCustodianResult.blocker,
                                             trendUp: securityIssuesTrendUp,
                                             successState: !securityIssuesTrendUp
                                         }

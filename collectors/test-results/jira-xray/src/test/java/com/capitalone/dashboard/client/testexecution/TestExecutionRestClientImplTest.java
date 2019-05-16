@@ -2,7 +2,7 @@ package com.capitalone.dashboard.client.testexecution;
 
 import com.atlassian.jira.rest.client.internal.async.DisposableHttpClient;
 import com.atlassian.util.concurrent.Promise;
-import com.capitalone.dashboard.TestResultSettings;
+import com.capitalone.dashboard.CustodianResultSettings;
 import com.capitalone.dashboard.api.JiraXRayRestClient;
 import com.capitalone.dashboard.api.domain.TestExecution;
 
@@ -45,7 +45,7 @@ public class TestExecutionRestClientImplTest {
         TestExecution.Test test = new TestExecution.Test(URI.create("https://myurl.com"), "EA-3403", 28775L, 1, TestRun.Status.PASS);
         PowerMockito.when(pr.claim()).thenReturn(test);
         ObjectId objectId = new ObjectId("5af11dd28902ccb2d87fcdab");
-        //PowerMockito.when(testResultCollectorRepository.findByName(FeatureCollectorConstants.JIRA_XRAY).getId()).thenReturn(objectId);
+        //PowerMockito.when(CustodianResultCollectorRepository.findByName(FeatureCollectorConstants.JIRA_XRAY).getId()).thenReturn(objectId);
     }
 
     @Test
@@ -53,9 +53,9 @@ public class TestExecutionRestClientImplTest {
         testExecution = new TestExecution(URI.create(""), "EME-4644", 1977l);
         TestExecutionRestClientImpl mock = PowerMockito.spy(new TestExecutionRestClientImpl(URI.create(""), httpClient));
         PowerMockito.doReturn(pr).when(mock, "getAndParse", Matchers.any(URI.class), Matchers.any(TestArrayJsonParser.class));
-        Promise<Iterable<TestExecution.Test>> testResult = mock.getTests(testExecution);
-        Assert.assertNotNull(testResult.claim());
-        System.out.println(testResult.claim());
+        Promise<Iterable<TestExecution.Test>> CustodianResult = mock.getTests(testExecution);
+        Assert.assertNotNull(CustodianResult.claim());
+        System.out.println(CustodianResult.claim());
     }
 
     @Test
@@ -64,8 +64,8 @@ public class TestExecutionRestClientImplTest {
         TestExecution.Test test = new TestExecution.Test(URI.create(""), "EA-3403", 28775L, 1, TestRun.Status.PASS);
         try {
             TestExecutionRestClientImpl mock = PowerMockito.spy(new TestExecutionRestClientImpl(URI.create(""), httpClient));
-            Promise<Iterable<TestExecution>> testResult = mock.get(test);
-            Assert.assertNotNull(testResult);
+            Promise<Iterable<TestExecution>> CustodianResult = mock.get(test);
+            Assert.assertNotNull(CustodianResult);
         } catch (Exception e) {
 
         }

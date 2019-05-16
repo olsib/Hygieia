@@ -20,7 +20,7 @@ public interface HygieiaService {
 
     boolean testConnection();
 
-    HygieiaResponse publishTestResults(TestDataCreateRequest request);
+    HygieiaResponse publishCustodianResults(TestDataCreateRequest request);
 
     HygieiaResponse publishSonarResults(CodeQualityCreateRequest request);
 

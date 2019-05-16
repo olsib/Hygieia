@@ -18,7 +18,7 @@ import static org.mockito.Mockito.when;
 /**
  * Created by stevegal on 2019-03-24.
  */
-public class CucumberJsonToTestResultTransformerTest {
+public class CucumberJsonToCustodianResultTransformerTest {
 
     ObjectMapper mapper;
 
@@ -36,7 +36,7 @@ public class CucumberJsonToTestResultTransformerTest {
     }
 
     @Test
-    public void producesCucumberTestResult() throws Exception {
+    public void producesCucumberCustodianResult() throws Exception {
 
         when(mockBuildDataRequest.getNumber()).thenReturn("aBuildNumber");
 
